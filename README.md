@@ -1,21 +1,24 @@
----
-bibliography: references.bib
----
+Metaexplicabilidad
+================
 
-# meta-explain
+## OBJETIVO
 
-# OBJETIVO
+> El objetivo es el de construir una meta-explicabilidad de distintos
+> modelos.
 
-> El objetivo es el de construir una meta-explicabilidad de distintos modelos.
+Se tendrán distintas tareas y, para cada una de ellas, un modelo
+entrenado a partir de sus propios datos. El objetivo que se persigue es
+el de encontrar una estructura común que sirva como meta-expicabilidad
+de los modelos. Sería la explicabilidad pero aplicada a (Thrun and Pratt
+1998)*multitask learning*.
 
-Se tendrán distintas tareas y, para cada una de ellas, un modelo entrenado a partir de sus propios datos. El objetivo que se persigue es el de encontrar una estructura común que sirva como meta-expicabilidad de los modelos. Sería la explicabilidad pero aplicada a [@learning1998a]*multitask learning*.
+## SIMULACIÓN DE DATOS
 
-# SIMULACIÓN DE DATOS
-
-Actualmente, para probar las ideas se generan 5 tareas con 10,000 observaciones de forma que
+Actualmente, para probar las ideas se generan 5 tareas con 10,000
+observaciones de forma que
 
 | Tarea | $X_1$ y $X_2$                                                      | $X_3$      | $X_4$      | $X_5$                          | $Y$                                                   |
-|:----------:|------------|------------|------------|------------|------------|
+|:-----:|--------------------------------------------------------------------|------------|------------|--------------------------------|-------------------------------------------------------|
 |   1   | `mvrnorm(n, mu = c(0, 0), Sigma = matrix(c(2, 1, .05, .6), 2, 2))` | `runif(n)` | `rnorm(n)` | `.2*x4**2 + rnorm(n, sd = .1)` | `std(rastrigin(x1, x2)) + std(x4**2 + x5**2 + x4*x5)` |
 |   2   | `mvrnorm(n, mu = c(0, 0), Sigma = matrix(c(2, 1, .05, .6), 2, 2))` | `runif(n)` | `rnorm(n)` | `.2*x4**2 + rnorm(n, sd = .1)` | `std(rastrigin(x1, x2)) + std(x4**2 + x5**2 + x4*x5)` |
 |   3   | `mvrnorm(n, mu = c(0, 0), Sigma = matrix(c(2, 1, .05, .6), 2, 2))` | `runif(n)` | `rnorm(n)` | `.2*x4**2 + rnorm(n, sd = .1)` | `std(rastrigin(x1, x2)) + std(x4**2 + x5**2 + x4*x5)` |
@@ -24,43 +27,90 @@ Actualmente, para probar las ideas se generan 5 tareas con 10,000 observaciones 
 
 donde
 
--   `std()` se refiere a la estandarización de media 0 y desviación típica 1 y
+- `std()` se refiere a la estandarización de media 0 y desviación típica
+  1 y
 
--   `rastrigin()` es la [función de Rastrigin](https://en.wikipedia.org/wiki/Rastrigin_function)
+- `rastrigin()` es la [función de
+  Rastrigin](https://en.wikipedia.org/wiki/Rastrigin_function)
 
 Como comentarios:
 
--   Las variables $X_1$ y $X_2$ se obtienen a partir de una **distribución normal multivariante.**
--   $X_3$ se obtiene a partir de una **distribución uniforme entre 0 y 1.**
--   $X_4$ se obtiene a partir de una **distribución normal de media 0 y desviación típica 1.**
--   $X_5$ se obtiene a como una transformación cuadrática creciente a partir de $X_4$ añadiendo un error aleatorio normal.
--   La variable objetivo $Y$ se obtiene con el resultado de aplicar la función de Rastrigin para $X_1$ y $X_2$ (estandariazado) más una transformación cuadrática utilizando las variables $X_4$ y $X_5$.
--   La variable $X_3$ no interviene en la generación de la variable objetivo.
+- Las variables $X_1$ y $X_2$ se obtienen a partir de una **distribución
+  normal multivariante.**
+- $X_3$ se obtiene a partir de una **distribución uniforme entre 0 y
+  1.**
+- $X_4$ se obtiene a partir de una **distribución normal de media 0 y
+  desviación típica 1.**
+- $X_5$ se obtiene a como una transformación cuadrática creciente a
+  partir de $X_4$ añadiendo un error aleatorio normal.
+- La variable objetivo $Y$ se obtiene con el resultado de aplicar la
+  función de Rastrigin para $X_1$ y $X_2$ (estandariazado) más una
+  transformación cuadrática utilizando las variables $X_4$ y $X_5$.
+- La variable $X_3$ no interviene en la generación de la variable
+  objetivo.
 
-En general, el comportamiento de las variables con respecto a la variable objetivo
+En general, el comportamiento de las variables con respecto a la
+variable objetivo
 
--   Dos variables estarán muy correladas y tendrán un patrón similar para todas las tareas,
--   Una variable que no contribuya a la variable objetivo y
--   Dos variables que sigan un patrón distinto para cada tarea y correladas.
+- Dos variables estarán muy correladas y tendrán un patrón similar para
+  todas las tareas,
+- Una variable que no contribuya a la variable objetivo y
+- Dos variables que sigan un patrón distinto para cada tarea y
+  correladas.
 
-# METAEXPLICABILIDAD
+## METAEXPLICABILIDAD
 
 Idea general:
 
--   Entrenar un modelo para cada tarea. *(TODO: Ahora mismo se entrena cada tarea independiente del resto. Podría ser interesante aplicar multi-task learning)*
--   Buscar una estructura general que sea aplicable (en cierto grado) para todas las tareas. Esto debe incluir:
-    -   Diferenciar variables que siguen un patrón similar para todas las tareas (actualmente serían las variables $X_1$ y $X_2$),
-    -   diferenciar variables que no influyen (son irrelevantes) para todas las tareas (variable $X_3$)
-    -   diferencias variables con patrones distintos para cada tarea ($X_4$ y $x_5$).
+- Entrenar un modelo para cada tarea. *(TODO: Ahora mismo se entrena
+  cada tarea independiente del resto. Podría ser interesante aplicar
+  multi-task learning)*
+- Buscar una estructura general que sea aplicable (en cierto grado) para
+  todas las tareas. Esto debe incluir:
+  - Diferenciar variables que siguen un patrón similar para todas las
+    tareas (actualmente serían las variables $X_1$ y $X_2$),
+  - diferenciar variables que no influyen (son irrelevantes) para todas
+    las tareas (variable $X_3$)
+  - diferencias variables con patrones distintos para cada tarea ($X_4$
+    y $x_5$).
 
-Como primer ensayo, se ha aplicado [@apley2020]**ALE plots** por separado para cada tarea y se han superpuesto los gráficos para cada variable.
+Como primer ensayo, se ha aplicado (Apley and Zhu 2020)**ALE plots** por
+separado para cada tarea y se han superpuesto los gráficos para cada
+variable.
 
 ![](plots/ale_by_var.png)
 
-> **Nota 1:** para la interpretación de los ALE plots, ver el [@apley2020]artículo original o este [capítulo](https://christophm.github.io/interpretable-ml-book/ale.html)
+> **Nota 1:** para la interpretación de los ALE plots, ver el (Apley and
+> Zhu 2020)artículo original o este
+> [capítulo](https://christophm.github.io/interpretable-ml-book/ale.html)
 
-> **Nota 2:** actualmente se ha entrenado un Random Forest para cada tarea dejando por defecto los hiperparámetros que utiliza la función del paquete `randomForest`.
+> **Nota 2:** actualmente se ha entrenado un Random Forest para cada
+> tarea dejando por defecto los hiperparámetros que utiliza la función
+> del paquete `randomForest`.
 
-Se ven claramente los patrones de cada variable así como los generales. ¿Habría una forma de automatizar el proceso? (Pensando en conjuntos de datos con un número alto de variables donde se discrimine de forma automática los distintos comporamientos descritos anteriormente).
+Se ven claramente los patrones de cada variable así como los generales.
+¿Habría una forma de automatizar el proceso? (Pensando en conjuntos de
+datos con un número alto de variables donde se discrimine de forma
+automática los distintos comporamientos descritos anteriormente).
 
-# REFERENCIAS
+## REFERENCIAS
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-apley2020" class="csl-entry">
+
+Apley, Daniel W., and Jingyu Zhu. 2020. “Visualizing the Effects of
+Predictor Variables in Black Box Supervised Learning Models.” *Journal
+of the Royal Statistical Society: Series B (Statistical Methodology)* 82
+(4): 1059–86. <https://doi.org/10.1111/rssb.12377>.
+
+</div>
+
+<div id="ref-learning1998" class="csl-entry">
+
+Thrun, Sebastian, and Lorien Pratt, eds. 1998. *Learning to Learn*.
+Boston, MA: Springer US. <https://doi.org/10.1007/978-1-4615-5529-2>.
+
+</div>
+
+</div>
