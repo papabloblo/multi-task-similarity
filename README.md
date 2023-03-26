@@ -9,8 +9,8 @@ Metaexplicabilidad
 Se tendrán distintas tareas y, para cada una de ellas, un modelo
 entrenado a partir de sus propios datos. El objetivo que se persigue es
 el de encontrar una estructura común que sirva como meta-expicabilidad
-de los modelos. Sería la explicabilidad pero aplicada a (Thrun and Pratt
-1998)*multitask learning*.
+de los modelos. Sería la explicabilidad pero aplicada a *multitask
+learning* (Thrun and Pratt 1998).
 
 ## SIMULACIÓN DE DATOS
 
@@ -74,8 +74,8 @@ Idea general:
   - diferencias variables con patrones distintos para cada tarea ($X_4$
     y $x_5$).
 
-Como primer ensayo, se ha aplicado (Apley and Zhu 2020)**ALE plots** por
-separado para cada tarea y se han superpuesto los gráficos para cada
+Como primer ensayo, se ha aplicado **ALE plots** (Apley and Zhu 2020)
+por separado para cada tarea y se han superpuesto los gráficos para cada
 variable.
 
 ![](plots/ale_by_var.png)
