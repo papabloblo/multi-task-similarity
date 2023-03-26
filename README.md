@@ -4,7 +4,7 @@ Metaexplicabilidad
 ## OBJETIVO
 
 > El objetivo es el de construir una meta-explicabilidad de distintos
-> modelos.
+> modelos entrenados en distintas tareas.
 
 Se tendrán distintas tareas y, para cada una de ellas, un modelo
 entrenado a partir de sus propios datos. El objetivo que se persigue es
@@ -71,8 +71,8 @@ Idea general:
     tareas (actualmente serían las variables $X_1$ y $X_2$),
   - diferenciar variables que no influyen (son irrelevantes) para todas
     las tareas (variable $X_3$)
-  - diferencias variables con patrones distintos para cada tarea ($X_4$
-    y $x_5$).
+  - diferenciar variables con patrones distintos para cada tarea ($X_4$
+    y $X_5$).
 
 Como primer ensayo, se ha aplicado **ALE plots** (Apley and Zhu 2020)
 por separado para cada tarea y se han superpuesto los gráficos para cada
@@ -80,8 +80,8 @@ variable.
 
 ![](plots/ale_by_var.png)
 
-> **Nota 1:** para la interpretación de los ALE plots, ver el (Apley and
-> Zhu 2020)artículo original o este
+> **Nota 1:** para la interpretación de los ALE plots, ver el artículo
+> original (Apley and Zhu 2020) o este
 > [capítulo](https://christophm.github.io/interpretable-ml-book/ale.html)
 
 > **Nota 2:** actualmente se ha entrenado un Random Forest para cada

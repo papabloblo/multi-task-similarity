@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## OBJETIVO
 
-> El objetivo es el de construir una meta-explicabilidad de distintos modelos.
+> El objetivo es el de construir una meta-explicabilidad de distintos modelos entrenados en distintas tareas.
 
 Se tendrán distintas tareas y, para cada una de ellas, un modelo entrenado a partir de sus propios datos. El objetivo que se persigue es el de encontrar una estructura común que sirva como meta-expicabilidad de los modelos. Sería la explicabilidad pero aplicada a *multitask learning* [@learning1998].
 
@@ -57,13 +57,13 @@ Idea general:
 -   Buscar una estructura general que sea aplicable (en cierto grado) para todas las tareas. Esto debe incluir:
     -   Diferenciar variables que siguen un patrón similar para todas las tareas (actualmente serían las variables $X_1$ y $X_2$),
     -   diferenciar variables que no influyen (son irrelevantes) para todas las tareas (variable $X_3$)
-    -   diferencias variables con patrones distintos para cada tarea ($X_4$ y $x_5$).
+    -   diferenciar variables con patrones distintos para cada tarea ($X_4$ y $X_5$).
 
 Como primer ensayo, se ha aplicado **ALE plots** [@apley2020] por separado para cada tarea y se han superpuesto los gráficos para cada variable.
 
 ![](plots/ale_by_var.png)
 
-> **Nota 1:** para la interpretación de los ALE plots, ver el [@apley2020]artículo original o este [capítulo](https://christophm.github.io/interpretable-ml-book/ale.html)
+> **Nota 1:** para la interpretación de los ALE plots, ver el artículo original [@apley2020] o este [capítulo](https://christophm.github.io/interpretable-ml-book/ale.html)
 
 > **Nota 2:** actualmente se ha entrenado un Random Forest para cada tarea dejando por defecto los hiperparámetros que utiliza la función del paquete `randomForest`.
 
