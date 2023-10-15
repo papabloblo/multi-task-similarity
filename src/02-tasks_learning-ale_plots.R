@@ -4,7 +4,7 @@
 
 
 # DEPENDENCIAS ------------------------------------------------------------
-
+library(tidyverse)
 library(randomForest)
 library(iml)
 
@@ -43,7 +43,31 @@ ale_by_var <- map_df(1:length(list_ales),
                        }
                      )  
 
+rownames(ale_by_var) <- NULL
 
+ale_by_var$.type <- NULL
+
+names(ale_by_var) <- c("y", "x", "feature", "task")
+
+ale_by_var <-  select(.data = ale_by_var, 
+                      task, feature, x, y )
+
+ale_by_var <- as_tibble(ale_by_var)
+
+saveRDS(ale_by_var, file = "data/ale_by_var.RDS")
+
+
+ale_by_var %>% 
+  filter(feature == "x1",
+         task %in% c(1,2)) %>% 
+  ggplot(aes(y = y, x = x, group = task)) +
+  geom_line() +
+  facet_wrap(. ~feature, scales = "free_x") +
+  labs(y = "f ale", 
+       x = "", 
+       title = "ALE plots by variable",
+       subtitle = "Each line represents a task"
+  )
 p <- ggplot(ale_by_var, aes(y = .value, x = .borders, group = task)) +
   geom_line() +
   facet_wrap(. ~.feature, scales = "free_x") +
