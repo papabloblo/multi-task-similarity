@@ -60,6 +60,8 @@ Mdist <- Mfret <- matrix(data = 0,
                          )
                    
 euc <- function(x1, x2) sqrt(sum((x1-x2)**2))
+
+
 for (i in 1:maxP) {
   for (j in 1:maxQ) {
     Mdist[i, j] <- euc(P[i,], Q[j,])
