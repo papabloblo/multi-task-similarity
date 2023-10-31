@@ -53,43 +53,73 @@ curves %>%
 
 fdist <- function(x1, x2) sqrt(sum((x1-x2)**2))
 
-frechet_results <- list()
-tasks <- unique(curves$task)
-
-i <- 0
-for (task1 in 1:(length(tasks)-1)){
-  for (task2 in (task1 + 1):length(tasks)){
-    for (w in unique(curves$type_weight)){
-      i <- i + 1
-      t1 <- curves[curves$task == tasks[task1] & curves$type_weight == w, ]
-      t2 <- curves[curves$task == tasks[task2] & curves$type_weight == w, ]
-      
-      res <- frechet(
-        Px = t1$x,
-        Py = t1$y,
-        Qx = t2$x,
-        Qy = t2$y,
-        fdist = fdist,
-        weight = t1$weight
-      )
-      
-      frechet_results[[i]] <- list(task1 = tasks[task1], 
-                                task2 = tasks[task2],
-                                weight = w,
-                                frechet = res
-                                )
-                           
-    }  
+#' Frechet distance between tasks considering the weight
+#'
+#' @param curves 
+#' @param fdist 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+frechet_tasks_weights <- function(curves, fdist) {
+  
+  frechet_results <- list()
+  tasks <- unique(curves$task)
+  
+  i <- 0
+  for (task1 in 1:(length(tasks)-1)){
+    for (task2 in (task1 + 1):length(tasks)){
+      for (w in unique(curves$type_weight)){
+        i <- i + 1
+        t1 <- curves[curves$task == tasks[task1] & curves$type_weight == w, ]
+        t2 <- curves[curves$task == tasks[task2] & curves$type_weight == w, ]
+        
+        res <- frechet(
+          Px = t1$x,
+          Py = t1$y,
+          Qx = t2$x,
+          Qy = t2$y,
+          fdist = fdist,
+          weight = t1$weight
+        )
+        
+        frechet_results[[i]] <- list(task1 = tasks[task1], 
+                                  task2 = tasks[task2],
+                                  weight = w,
+                                  frechet = res
+                                  )
+                             
+      }  
+    }
   }
+  
+  frechet_results <- map(frechet_results, 
+      function(x) data.frame(weight = x$weight,
+                             task1 = x$task1,
+                             task2 = x$task2,
+                             dist_frechet = x$frechet$Dist_frechet
+      )
+  ) %>% 
+    list_rbind() %>% 
+    arrange(weight, task1, task2)
+  
+  return(frechet_results)
 }
 
-map(frechet_results, 
-    function(x) data.frame(weight = x$weight,
-                           task1 = x$task1,
-                           task2 = x$task2,
-                           dist_frechet = x$frechet$Dist_frechet
-                           )
-    ) %>% 
-  list_rbind() %>% 
-  arrange(weight, task1, task2)
+frechet_tasks_weights(curves, fdist)
 
+# PRUEBAS CON LAS CURVAS ALE -----------------------------------------------
+
+ale_by_var <- readRDS("data/ale_by_var.RDS")
+
+x1 <- ale_by_var %>% 
+  filter(task == 1, feature == "x1")
+
+list_ales[[1]]$x1
+
+df_t1 <- df[df$id_task == 1, ]
+df_t1 <- tibble(df_t1)
+
+quantile(df_t1$x1, probs = (0:30)/30)
+x1$x
