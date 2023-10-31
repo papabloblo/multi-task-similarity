@@ -1,28 +1,42 @@
 #' 
-#' ENTRENAMIENTO DE LOS MODELOS Y GENERACIÓN DE LOS ALE PLOTS
+#' TRAINING THE MODELS AND ALE PLOTS COMPUTATION
 #' 
+#'  Output:
+#'    - file: data/ale_by_task_var.RDS
+#'    - description: A data.frame that contains the ALE curve
+#'                  for each feature and task.
+#' 
+#' TODO:
+#'    1. Abstract model function in ale_plots.
+#'    2. Move functions to aux.R file.
+#'    
 
 
-# DEPENDENCIAS ------------------------------------------------------------
+# DEPENDENCIES ------------------------------------------------------------
 library(tidyverse)
 library(randomForest)
-library(iml)
+
+source("src/00-aux/ALE.R")
 
 
-# CARGA DE DATOS ----------------------------------------------------------
+# READING DATA ----------------------------------------------------------
 
-df <- read.csv("data/tasks_data.csv")
+df <- read_csv("data/tasks_data.csv")
 
 
-# ENTRENAMIENTO Y ALE PLOTS -----------------------------------------------
+# TRAINING AND ALE COMPUTATION --------------------------------------------
 
-ale_plots <- function(df, method = 'ale'){
-  mod <- randomForest(y ~ ., data = df)
-
-  X <- df[names(df) != "y"]
-  predictor <- Predictor$new(mod, data = X, y = df$y)
+ale_plots <- function(df, response = "y", predictors = "all"){
   
-  return(FeatureEffects$new(predictor, method = method, grid.size = 30))
+  if (predictors[1] == "all") 
+    predictors <- names(df)[names(df) != response]
+  
+  mod <- randomForest(
+    reformulate(response = "y", termlabels = predictors),
+    data = df
+    )
+  
+  return(ale(df, mod, features = predictors))
 }
 
 
@@ -35,32 +49,25 @@ for (task in unique(df$id_task)){
   list_ales[[task]] <- ale_plots(df_task)
 }
 
-ale_by_var <- map_df(1:length(list_ales), 
-                     function(x){
-                       y <- do.call(rbind, list_ales[[x]]$results)
-                       y$task <- x
-                       return(y)
-                       }
-                     )  
 
-rownames(ale_by_var) <- NULL
+if (is.null(names(list_ales))) names(list_ales) <- 1:length(list_ales)
 
-ale_by_var$.type <- NULL
+aux <- list()
+for (task in names(list_ales)){
+  for (x in names(list_ales[[task]])){
+    list_ales[[task]][[x]]$task <- task
+    list_ales[[task]][[x]]$feature <- x
+  }
+  aux[[task]] <- bind_rows(list_ales[[task]])
+}
 
-names(ale_by_var) <- c("y", "x", "feature", "task")
+ale_by_task_var <- bind_rows(aux)
 
-ale_by_var <-  select(.data = ale_by_var, 
-                      task, feature, x, y )
-
-ale_by_var <- as_tibble(ale_by_var)
-
-saveRDS(ale_by_var, file = "data/ale_by_var.RDS")
+saveRDS(ale_by_task_var, file = "data/ale_by_task_var.RDS")
 
 
-ale_by_var %>% 
-  filter(feature == "x1",
-         task %in% c(1,2)) %>% 
-  ggplot(aes(y = y, x = x, group = task)) +
+ale_by_task_var %>% 
+  ggplot(aes(y = ale, x = x, group = task)) +
   geom_line() +
   facet_wrap(. ~feature, scales = "free_x") +
   labs(y = "f ale", 
@@ -68,15 +75,5 @@ ale_by_var %>%
        title = "ALE plots by variable",
        subtitle = "Each line represents a task"
   )
-p <- ggplot(ale_by_var, aes(y = .value, x = .borders, group = task)) +
-  geom_line() +
-  facet_wrap(. ~.feature, scales = "free_x") +
-  labs(y = "f ale", 
-       x = "", 
-       title = "ALE plots by variable",
-       subtitle = "Each line represents a task"
-       )
-
-ggsave("plots/ale_by_var.png", plot = p, width = 30, height = 20, units = "cm")
 
 
