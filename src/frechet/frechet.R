@@ -1,6 +1,9 @@
-frechet <- function(Px, Py, Qx, Qy, fdist, weight = FALSE, FrechetSumOrMax = "sum"){
-  
-  
+frechet <- function(Px, Py, 
+                    Qx, Qy, 
+                    n1, n2, 
+                    fdist, 
+                    fweight, 
+                    FrechetSumOrMax = "sum"){
   
   P <- matrix(NA, nrow = length(Px), ncol = 2)
   P[,1] <- Px
@@ -20,11 +23,11 @@ frechet <- function(Px, Py, Qx, Qy, fdist, weight = FALSE, FrechetSumOrMax = "su
                                            )
                            )
   
-  if (isFALSE(weight)) weight <- rep(1, maxP)
+  # if (isFALSE(weight)) weight <- rep(1, maxP)
   
   for (i in 1:maxP) {
     for (j in 1:maxQ) {
-      Mdist[i, j] <- fdist(P[i,], Q[j,]) * weight[i]
+      Mdist[i, j] <- fdist(P[i,], Q[j,]) * fweight(n1[i], n2[j])
       
       if (i == 1 && j == 1) {
         Mfret[1, 1] = Mdist[1, 1]

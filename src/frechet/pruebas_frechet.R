@@ -51,7 +51,7 @@ curves %>%
 
 # Función de distancia
 
-fdist <- function(x1, x2) sqrt(sum((x1-x2)**2))
+
 
 #' Frechet distance between tasks considering the weight
 #'
@@ -107,19 +107,5 @@ frechet_tasks_weights <- function(curves, fdist) {
   return(frechet_results)
 }
 
-frechet_tasks_weights(curves, fdist)
+frechet_tasks_weights(curves, fdist = euclid_dist)
 
-# PRUEBAS CON LAS CURVAS ALE -----------------------------------------------
-
-ale_by_var <- readRDS("data/ale_by_var.RDS")
-
-x1 <- ale_by_var %>% 
-  filter(task == 1, feature == "x1")
-
-list_ales[[1]]$x1
-
-df_t1 <- df[df$id_task == 1, ]
-df_t1 <- tibble(df_t1)
-
-quantile(df_t1$x1, probs = (0:30)/30)
-x1$x

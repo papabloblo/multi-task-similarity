@@ -69,7 +69,7 @@ saveRDS(ale_by_task_var, file = "data/ale_by_task_var.RDS")
 ale_by_task_var %>% 
   ggplot(aes(y = ale, x = x, group = task)) +
   geom_line() +
-  facet_wrap(. ~feature, scales = "free_x") +
+  facet_wrap(. ~feature + task, scales = "free_x") +
   labs(y = "f ale", 
        x = "", 
        title = "ALE plots by variable",
