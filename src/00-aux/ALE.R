@@ -1,8 +1,14 @@
 #' ALE ALGORITHM IMPLEMENTATION
-
+#' 
+#' TODO: 
+#'    - Input to ale_by_task_feature: A list with de predictor 
+#'        function of each model
+#'    - 
+#'    
 
 
 library(tidyverse)
+
 
 quantiles_xALE <- function(df, features, n = 30, epsilon = 0.01){
   xALE <- list()
@@ -13,6 +19,7 @@ quantiles_xALE <- function(df, features, n = 30, epsilon = 0.01){
   }
   return(xALE)
 }
+
 
 ale <- function(df, model, features, xALE = NA){
   
@@ -118,6 +125,7 @@ ale_plot_by_var <- function(curve_ale, x, point = FALSE){
   
 }
 
+
 ale_plot <- function(ale_by_var, df_original, features = "all", point = FALSE) {
   aux <- ale_by_var
   
@@ -137,4 +145,43 @@ ale_plot <- function(ale_by_var, df_original, features = "all", point = FALSE) {
   }
   
   return(wrap_plots(plot_list))
+}
+
+
+ale_plots <- function(df, response = "y", predictors = "all", model = randomForest){
+  
+  if (predictors[1] == "all") 
+    predictors <- names(df)[names(df) != response]
+  
+  mod <- model(
+    reformulate(response = response, termlabels = predictors),
+    data = df
+  )
+  
+  return(ale(df, mod, features = predictors))
+}
+
+
+ale_by_task_feature <- function(df, model = randomForest) {
+  
+  list_ales <- list()
+  for (task in unique(df$id_task)){
+    df_task <- df[df$id_task == task, ]
+    df_task$id_task <- NULL
+    list_ales[[task]] <- ale_plots(df_task, model = model)
+  }
+  
+  if (is.null(names(list_ales))) names(list_ales) <- 1:length(list_ales)
+  
+  aux <- list()
+  for (task in names(list_ales)){
+    for (x in names(list_ales[[task]])){
+      list_ales[[task]][[x]]$task <- task
+      list_ales[[task]][[x]]$feature <- x
+    }
+    aux[[task]] <- bind_rows(list_ales[[task]])
+  }
+  
+  return(bind_rows(aux))
+
 }

@@ -7,85 +7,72 @@
 # DEPENDENCIES ------------------------------------------------------------
 
 library(tidyverse)
+library(randomForest)
 
 source("src/frechet/frechet.R")
 
 # LOAD ALE CURVES ---------------------------------------------------------
 
 ale_curves <- read_rds("data/ale_by_task_var.RDS")
+# df <- read_csv("data/tasks_data.csv")
+df <- read_rds("data/tasks_data_std.RDS")
 
 
 # FRECHET DISTANCE --------------------------------------------------------
 
 euclid_dist <- function(x1, x2) sqrt(sum((x1-x2)**2))
+fweight <- function(n1, n2) max(n1, n2)/min(n1, n2)
 
 
-fweight <- function(n1, n2) min(n1, n2)/max(n1, n2)
+frechet_results <- frechet_taks_feature(ale_curves,
+                                        fdist = euclid_dist,
+                                        fweight = fweight)
 
 
-frechet_results <- list()
+frechet_task_feature_summary <- frechet_summary(frechet_results)
 
-tasks <- unique(ale_curves$task)
+imp <- importance(df)
 
-i <- 0
-for (task1 in tasks){
-  for (task2 in tasks[tasks != task1]){ 
-    t1 <- ale_curves[ale_curves$task == task1, ]
-    t2 <- ale_curves[ale_curves$task == task2, ]
-    
-    for (feature1 in unique(t1$feature)){
-      for (feature2 in unique(t2$feature)){
-        t1_f1 <- t1[t1$feature == feature1, ]
-        t2_f2 <- t2[t2$feature == feature2, ]
-        
-        res <- frechet(
-          Px = t1_f1$x, Py = t1_f1$ale,
-          Qx = t2_f2$x, Qy = t2_f2$ale,
-          n1 = t1_f1$n, n2 = t2_f2$n, 
-          fdist = euclid_dist,
-          fweight = fweight
-        )
-        i <- i + 1
-        frechet_results[[i]] <- list(task1 = task1, 
-                                     task2 = task2,
-                                     f1 = feature1,
-                                     f2 = feature2,
-                                     frechet = res
-                                     )
-      }
-    }
-  }
+names(imp) <- 1:length(imp)
+for (task in names(imp)){
+  imp[[task]] <- data.frame(task = task, 
+             feature = names(imp[[task]]), 
+             imp = imp[[task]]
+             )
+  row.names(imp[[task]]) <- NULL
 }
-
-frechet_results[[1]]
-
-frechet_results <- map(frechet_results, 
-                       function(x) data.frame(task1 = x$task1,
-                                              task2 = x$task2,
-                                              f1 = x$f1,
-                                              f2 = x$f2,
-                                              dist_frechet = x$frechet$Dist_frechet
-                                              )
-                       ) %>% 
-  list_rbind() %>% 
-  as_tibble()
+imp <- bind_rows(imp)
 
 
-frechet_results %>% 
+frechet_task_feature_summary <- frechet_task_feature_summary %>% 
+  left_join(imp, by = c("task1" = "task",
+                        "f1" = "feature")) %>% 
+  rename(impf1 = imp) %>% 
+  left_join(imp, by = c("task2" = "task",
+                        "f2" = "feature")) %>% 
+  rename(impf2 = imp) %>% 
+  mutate(w_imp = mapply(fweight, n1 = impf1, n2 = impf2))
+
+
+
+frechet_task_feature_summary <- frechet_task_feature_summary %>%
+  mutate(dist_frechet2 = dist_frechet * w_imp)
+
+frechet_task_feature_summary %>% 
   filter(task1 %in% 1:2,
          task2 %in% 1:2,
          f1 %in% c("x1", "x2"),
          f2 %in% c("x1", "x2"))
 
-frechet_results %>% 
+frechet_task_feature_summary %>% 
   group_by(task1, task2, f1) %>% 
-  filter(dist_frechet == min(dist_frechet)) %>% 
+  filter(dist_frechet2 == min(dist_frechet2)) %>% 
   group_by(task1, task2) %>% 
-  summarise(sum_frechet = sum(dist_frechet)) %>% 
+  summarise(sum_frechet = sum(dist_frechet2)) %>% 
   arrange(task1, sum_frechet)
 
 
-ale_by_task_var %>% 
+ale_curves %>% 
   ggplot(aes(y = ale, x = x, group = task)) +
   geom_line() +
   facet_wrap(. ~task + feature, scales = "free_x") +
