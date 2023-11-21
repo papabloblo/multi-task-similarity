@@ -1,29 +1,31 @@
 #' 
-#' GENERACIÓN DE DATOS PARA LAS TAREAS
+#' DATA SIMULATION FOR TASKS
 #' 
 #' 
 
-# DEPENDENCIAS ------------------------------------------------------------
+
+# DEPENDENCIES ------------------------------------------------------------
+
 library(MASS)
 library(tidyverse)
 
 source("src/aux/aux_data_generation.R")
 
-# GENERACIÓN DE DATOS -----------------------------------------------------
 
-# Semilla para la aleatoriedad
+# DATA SIMULATION ---------------------------------------------------------
+
 set.seed(2023)
 
-# Número de tareas
+# Number of tasks
 n_tasks <- 5
 
-# Número de observaciones por tarea
-n <- 10000
+# Number of observations per task
+n_obs <- 10000
 
 
 data_generation <- function(id_task, n, fun_x4_x5){
   
-  # Variables dependientes
+  # Features
   df <- mvrnorm(n, 
           mu = c(0, 0),
           Sigma = matrix(c(2, 1, .05, .6), 2, 2)
@@ -37,10 +39,10 @@ data_generation <- function(id_task, n, fun_x4_x5){
   
   df$x5 <- .2*df$x4**2 + rnorm(n, sd = .1)
   
-  # Variable objetivo
+  # Target
   df$y <- std(rastrigin(df$x1, df$x2)) + std(fun_x4_x5(df$x4, df$x5))
   
-  # Identificador de la tarea
+  # Task identification
   df$id_task <- id_task
   
   return(df)
@@ -62,14 +64,15 @@ funs_x4_x5 <- list(
   )
 
 
-# Creación del data.frame con los datos
+# Final data.frame
 tasks_data <- purrr::map2_df(1:n_tasks, 
                funs_x4_x5, 
                data_generation, 
                n = n)
 
 
-# GUARDADO DE DATOS -------------------------------------------------------
+
+# SAVING DATA -------------------------------------------------------------
 
 write.csv(tasks_data, file = "data/tasks_data.csv", row.names = FALSE)
 
