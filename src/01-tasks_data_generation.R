@@ -8,69 +8,20 @@
 
 library(MASS)
 library(tidyverse)
+library(EnvStats)
+library(rjson)
+library(sn)
 
-source("src/aux/aux_data_generation.R")
+source("src/00-aux/aux_data_generation.R")
 
 
 # DATA SIMULATION ---------------------------------------------------------
 
-set.seed(2023)
-
-# Number of tasks
-n_tasks <- 5
-
-# Number of observations per task
-n_obs <- 10000
-
-
-data_generation <- function(id_task, n, fun_x4_x5){
-  
-  # Features
-  df <- mvrnorm(n, 
-          mu = c(0, 0),
-          Sigma = matrix(c(2, 1, .05, .6), 2, 2)
-          ) %>% 
-    data.frame()
-  
-  names(df) <- c("x1", "x2")
-  
-  df$x3 <- runif(n)
-  df$x4 <- rnorm(n)
-  
-  df$x5 <- .2*df$x4**2 + rnorm(n, sd = .1)
-  
-  # Target
-  df$y <- std(rastrigin(df$x1, df$x2)) + std(fun_x4_x5(df$x4, df$x5))
-  
-  # Task identification
-  df$id_task <- id_task
-  
-  return(df)
-}
-
-# Lista de funciones que aplica cada tarea sobre las varibles x4 y x5
-# TODO: leer las funciones a partir de un archivo externo de 
-#       configuración de las tareas
-funs_x4_x5 <- list(
-  function(x4, x5) x4**2 + x5**2 + x4*x5,
-  
-  function(x4, x5) -x4**2 - x5**2 - x4*x5,
-  
-  function(x4, x5) x4**2 + x5**2 - x4*x5,
-  
-  function(x4, x5) x4**2 - x5**2 - x4*x5,
-  
-  function(x4, x5) -x4**2 - x5**2 + x4*x5
-  )
-
+task_config <- fromJSON(file = "data/task_config.json")
 
 # Final data.frame
-tasks_data <- purrr::map2_df(1:n_tasks, 
-               funs_x4_x5, 
-               data_generation, 
-               n = n)
-
-
+set.seed(2023)
+tasks_data <- do.call(rbind, lapply(task_config, data_generation))
 
 # SAVING DATA -------------------------------------------------------------
 
