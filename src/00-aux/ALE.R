@@ -32,7 +32,7 @@ ale <- function(df, model, features, xALE = NA){
   for (x in features){
     df_aux <- df
     
-    n_xALE <- numeric(length(xALE[[x]]))
+    n_xALE <- numeric(length(xALE[[x]])-1)
     for (i in 1:(length(n_xALE))){
       n_xALE[i] <- sum(df[[x]] > xALE[[x]][i] & df[[x]] <= xALE[[x]][i+1])
     }

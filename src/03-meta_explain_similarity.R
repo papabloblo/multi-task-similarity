@@ -58,6 +58,21 @@ frechet_task_feature_summary <- frechet_task_feature_summary %>%
 frechet_task_feature_summary <- frechet_task_feature_summary %>%
   mutate(dist_frechet2 = dist_frechet * w_imp)
 
+
+frechet_task_feature_summary2 <- frechet_task_feature_summary %>% 
+  filter(f1 == f2)
+
+frechet_task_feature_summary2 <- frechet_task_feature_summary2 %>% 
+  arrange(task1, f1, task2) %>% 
+  select(task1, task2, f1, dist_frechet2)
+
+
+
+frechet_task_feature_summary2 %>% 
+  pivot_wider(names_from = f1, values_from= dist_frechet2)
+
+
+
 frechet_task_feature_summary %>% 
   filter(task1 %in% 1:2,
          task2 %in% 1:2,
