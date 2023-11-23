@@ -24,17 +24,20 @@ df <- read_csv("data/tasks_data.csv")
 
 # Standardization
 
-df <- df %>% 
-  group_by(id_task) %>% 
-  mutate(across(x1:x5, ~(.x-mean(.x))/sd(.x))) %>% 
-  ungroup()
+# df <- df %>% 
+#   group_by(id_task) %>% 
+#   mutate(across(x1:x5, ~(.x-mean(.x))/sd(.x))) %>% 
+#   ungroup()
 
 saveRDS(df, "data/tasks_data_std.RDS")
 
 # TRAINING AND ALE COMPUTATION --------------------------------------------
 
 set.seed(2023)
-ale_t_x <- ale_by_task_feature(df, randomForest)
+
+xALE <- grid_xALE(df, c("x1", "x2", "x3", "x4", "x5"), n = 50)
+
+ale_t_x <- ale_by_task_feature(df, randomForest, xALE = xALE)
 
 
 # SAVE  -------------------------------------------------------------------

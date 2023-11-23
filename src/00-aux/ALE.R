@@ -21,6 +21,16 @@ quantiles_xALE <- function(df, features, n = 30, epsilon = 0.01){
 }
 
 
+grid_xALE <- function(df, features, n = 30, epsilon = 0.01){
+  xALE <- list()
+  for (f in features){
+    xALE[[f]] <- seq(from = min(df[[f]]) - epsilon,
+                     to = max(df[[f]]) + epsilon,
+                     length.out = n)
+  }
+  return(xALE)
+}
+
 ale <- function(df, model, features, xALE = NA){
   
   if (is.na(xALE[1])){
@@ -148,7 +158,10 @@ ale_plot <- function(ale_by_var, df_original, features = "all", point = FALSE) {
 }
 
 
-ale_plots <- function(df, response = "y", predictors = "all", model = randomForest){
+ale_plots <- function(df, 
+                      response = "y",
+                      predictors = "all",
+                      model = randomForest,...){
   
   if (predictors[1] == "all") 
     predictors <- names(df)[names(df) != response]
@@ -158,17 +171,17 @@ ale_plots <- function(df, response = "y", predictors = "all", model = randomFore
     data = df
   )
   
-  return(ale(df, mod, features = predictors))
+  return(ale(df, mod, features = predictors,...))
 }
 
 
-ale_by_task_feature <- function(df, model = randomForest) {
+ale_by_task_feature <- function(df, model = randomForest,...) {
   
   list_ales <- list()
   for (task in unique(df$id_task)){
     df_task <- df[df$id_task == task, ]
     df_task$id_task <- NULL
-    list_ales[[task]] <- ale_plots(df_task, model = model)
+    list_ales[[task]] <- ale_plots(df_task, model = model,...)
   }
   
   if (is.null(names(list_ales))) names(list_ales) <- 1:length(list_ales)

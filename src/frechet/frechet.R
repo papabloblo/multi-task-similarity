@@ -1,3 +1,5 @@
+euclid_dist <- function(x1, x2) sqrt(sum((x1-x2)**2))
+
 frechet <- function(Px, Py, 
                     Qx, Qy, 
                     n1, n2, 
@@ -62,11 +64,18 @@ frechet <- function(Px, Py,
 }
 
 
-frechet_taks_feature <- function(ale_curves, fdist, fweight) {
+frechet_taks_feature <- function(ale_curves, 
+                                 fdist, 
+                                 fweight,
+                                 same_features = TRUE) {
   
   frechet_results <- list()
   
   tasks <- unique(ale_curves$task)
+  
+  ale_curves <- ale_curves %>% 
+    group_by(feature) %>% 
+    mutate(x = (x - mean(x))/sd(x))
   
   i <- 0
   for (task1 in tasks){
@@ -74,10 +83,18 @@ frechet_taks_feature <- function(ale_curves, fdist, fweight) {
       t1 <- ale_curves[ale_curves$task == task1, ]
       t2 <- ale_curves[ale_curves$task == task2, ]
       
-      for (feature1 in unique(t1$feature)){
-        for (feature2 in unique(t2$feature)){
-          t1_f1 <- t1[t1$feature == feature1, ]
-          t2_f2 <- t2[t2$feature == feature2, ]
+      if (same_features){
+        features <- data.frame(feature1 = unique(t1$feature),
+                               feature2 = unique(t1$feature))
+      } else {
+        features <- expand.grid(feature1 = unique(t1$feature),
+                                feature2 = unique(t2$feature))
+      }
+      
+      for (f in 1:nrow(features)){
+        
+          t1_f1 <- t1[t1$feature == features$feature1[f], ]
+          t2_f2 <- t2[t2$feature == features$feature2[f], ]
           
           res <- frechet(
             Px = t1_f1$x, Py = t1_f1$ale,
@@ -89,11 +106,11 @@ frechet_taks_feature <- function(ale_curves, fdist, fweight) {
           i <- i + 1
           frechet_results[[i]] <- list(task1 = task1, 
                                        task2 = task2,
-                                       f1 = feature1,
-                                       f2 = feature2,
+                                       f1 = features$feature1[f],
+                                       f2 = features$feature2[f],
                                        frechet = res
           )
-        }
+        
       }
     }
   }
@@ -117,7 +134,10 @@ frechet_summary <- function(frechet_results){
 }
 
 
-importance <- function(df, model = randomForest, predictors = "all", response = "y"){
+importance <- function(df, 
+                       model = randomForest, 
+                       predictors = "all",
+                       response = "y"){
   
   list_importance <- list()
   for (task in unique(df$id_task)){
@@ -137,5 +157,6 @@ importance <- function(df, model = randomForest, predictors = "all", response = 
     
     list_importance[[task]] <- imp/sum(imp)
   }
+  
   return(list_importance)
 }

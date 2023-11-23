@@ -8,6 +8,7 @@
 
 library(tidyverse)
 library(randomForest)
+library(kableExtra)
 
 source("src/frechet/frechet.R")
 
@@ -20,8 +21,9 @@ df <- read_rds("data/tasks_data_std.RDS")
 
 # FRECHET DISTANCE --------------------------------------------------------
 
-euclid_dist <- function(x1, x2) sqrt(sum((x1-x2)**2))
 fweight <- function(n1, n2) max(n1, n2)/min(n1, n2)
+fweight <- function(n1, n2) min(n1, n2)/max(n1, n2)
+# fweight <- function(n1, n2) 1
 
 
 frechet_results <- frechet_taks_feature(ale_curves,
@@ -30,6 +32,15 @@ frechet_results <- frechet_taks_feature(ale_curves,
 
 
 frechet_task_feature_summary <- frechet_summary(frechet_results)
+
+frechet_task_feature_summary %>% 
+  select(-f2) %>% 
+  pivot_wider(names_from = f1,
+              values_from = dist_frechet)
+
+
+
+
 
 imp <- importance(df)
 
@@ -62,15 +73,22 @@ frechet_task_feature_summary <- frechet_task_feature_summary %>%
 frechet_task_feature_summary2 <- frechet_task_feature_summary %>% 
   filter(f1 == f2)
 
-frechet_task_feature_summary2 <- frechet_task_feature_summary2 %>% 
+frechet_task_feature_summary2 <- frechet_task_feature_summary %>% 
   arrange(task1, f1, task2) %>% 
   select(task1, task2, f1, dist_frechet2)
 
 
 
-frechet_task_feature_summary2 %>% 
+df <- frechet_task_feature_summary2 %>% 
   pivot_wider(names_from = f1, values_from= dist_frechet2)
 
+
+df %>% 
+  mutate(across(x1:x5, ~round(.x, digits = 2))) %>% 
+  kbl(caption="Summary Statistics of Financial Well-Being Score by Gender and Education",
+      format="latex",
+      align="r") %>%
+  kable_paper(full_width = F)
 
 
 frechet_task_feature_summary %>% 
