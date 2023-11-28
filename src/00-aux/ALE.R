@@ -198,3 +198,31 @@ ale_by_task_feature <- function(df, model = randomForest,...) {
   return(bind_rows(aux))
 
 }
+
+
+importance <- function(df, 
+                       model = randomForest, 
+                       predictors = "all",
+                       response = "y"){
+  
+  list_importance <- list()
+  for (task in unique(df$id_task)){
+    df_task <- df[df$id_task == task, ]
+    df_task$id_task <- NULL
+    
+    if (predictors[1] == "all") 
+      predictors <- names(df_task)[names(df_task) != response]
+    
+    mod <- model(
+      reformulate(response = response, termlabels = predictors),
+      data = df_task,
+      importance = TRUE
+    )
+    
+    imp <- mod$importance[, "IncNodePurity"]
+    
+    list_importance[[task]] <- imp/sum(imp)
+  }
+  
+  return(list_importance)
+}

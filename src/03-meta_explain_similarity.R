@@ -15,103 +15,37 @@ source("src/frechet/frechet.R")
 # LOAD ALE CURVES ---------------------------------------------------------
 
 ale_curves <- read_rds("data/ale_by_task_var.RDS")
-# df <- read_csv("data/tasks_data.csv")
-df <- read_rds("data/tasks_data_std.RDS")
+df <- read_csv("data/tasks_data.csv")
+imp <- readRDS("data/importance.RDS")
 
 
 # FRECHET DISTANCE --------------------------------------------------------
 
-fweight <- function(n1, n2) max(n1, n2)/min(n1, n2)
+# weight function for Frechet distance
 fweight <- function(n1, n2) min(n1, n2)/max(n1, n2)
-# fweight <- function(n1, n2) 1
+
+# compute Frechet distance
+frechet_results <- frechet_tasks_feature(ale_curves,
+                                         importance = imp,
+                                         fweight = fweight
+                                         )
+
+# summary of results
+similarity_task_var_summary <- frechet_task_var_summary(frechet_results)
+
+similarity_task_summary <- frechet_task_summary(frechet_results)
 
 
-frechet_results <- frechet_taks_feature(ale_curves,
-                                        fdist = euclid_dist,
-                                        fweight = fweight)
+# DATA SAVING -------------------------------------------------------------
 
-
-frechet_task_feature_summary <- frechet_summary(frechet_results)
-
-frechet_task_feature_summary %>% 
-  select(-f2) %>% 
-  pivot_wider(names_from = f1,
-              values_from = dist_frechet)
-
-
-
-
-
-imp <- importance(df)
-
-names(imp) <- 1:length(imp)
-for (task in names(imp)){
-  imp[[task]] <- data.frame(task = task, 
-             feature = names(imp[[task]]), 
-             imp = imp[[task]]
-             )
-  row.names(imp[[task]]) <- NULL
-}
-imp <- bind_rows(imp)
-
-
-frechet_task_feature_summary <- frechet_task_feature_summary %>% 
-  left_join(imp, by = c("task1" = "task",
-                        "f1" = "feature")) %>% 
-  rename(impf1 = imp) %>% 
-  left_join(imp, by = c("task2" = "task",
-                        "f2" = "feature")) %>% 
-  rename(impf2 = imp) %>% 
-  mutate(w_imp = mapply(fweight, n1 = impf1, n2 = impf2))
-
-
-
-frechet_task_feature_summary <- frechet_task_feature_summary %>%
-  mutate(dist_frechet2 = dist_frechet * w_imp)
-
-
-frechet_task_feature_summary2 <- frechet_task_feature_summary %>% 
-  filter(f1 == f2)
-
-frechet_task_feature_summary2 <- frechet_task_feature_summary %>% 
-  arrange(task1, f1, task2) %>% 
-  select(task1, task2, f1, dist_frechet2)
-
-
-
-df <- frechet_task_feature_summary2 %>% 
-  pivot_wider(names_from = f1, values_from= dist_frechet2)
-
-
-df %>% 
-  mutate(across(x1:x5, ~round(.x, digits = 2))) %>% 
-  kbl(caption="Summary Statistics of Financial Well-Being Score by Gender and Education",
-      format="latex",
-      align="r") %>%
-  kable_paper(full_width = F)
-
-
-frechet_task_feature_summary %>% 
-  filter(task1 %in% 1:2,
-         task2 %in% 1:2,
-         f1 %in% c("x1", "x2"),
-         f2 %in% c("x1", "x2"))
-
-frechet_task_feature_summary %>% 
-  group_by(task1, task2, f1) %>% 
-  filter(dist_frechet2 == min(dist_frechet2)) %>% 
-  group_by(task1, task2) %>% 
-  summarise(sum_frechet = sum(dist_frechet2)) %>% 
-  arrange(task1, sum_frechet)
-
-
-ale_curves %>% 
-  ggplot(aes(y = ale, x = x, group = task)) +
-  geom_line() +
-  facet_wrap(. ~task + feature, scales = "free_x") +
-  labs(y = "f ale", 
-       x = "", 
-       title = "ALE plots by variable",
-       subtitle = "Each line represents a task"
+saveRDS(
+  similarity_task_var_summary, 
+  "data/similarity/similarity_task_var_summary.RDS"
   )
+
+saveRDS(
+  similarity_task_summary, 
+  "data/similarity/similarity_task_summary.RDS"
+)
+
 

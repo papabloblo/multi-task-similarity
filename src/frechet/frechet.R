@@ -64,19 +64,22 @@ frechet <- function(Px, Py,
 }
 
 
-frechet_taks_feature <- function(ale_curves, 
-                                 fdist, 
+frechet_tasks_feature <- function(ale_curves, 
                                  fweight,
-                                 same_features = TRUE) {
+                                 importance,
+                                 fdist = euclid_dist,
+                                 same_features = TRUE, 
+                                 std = TRUE) {
   
-  frechet_results <- list()
+  if (std){
+    ale_curves <- ale_curves %>% 
+      group_by(feature) %>% 
+      mutate(x = (x - mean(x))/sd(x))  
+  }
   
   tasks <- unique(ale_curves$task)
   
-  ale_curves <- ale_curves %>% 
-    group_by(feature) %>% 
-    mutate(x = (x - mean(x))/sd(x))
-  
+  frechet_results <- list()
   i <- 0
   for (task1 in tasks){
     for (task2 in tasks[tasks != task1]){ 
@@ -108,8 +111,9 @@ frechet_taks_feature <- function(ale_curves,
                                        task2 = task2,
                                        f1 = features$feature1[f],
                                        f2 = features$feature2[f],
-                                       frechet = res
-          )
+                                       frechet = res,
+                                       importance = importance[[task1]]
+                                       )
         
       }
     }
@@ -118,45 +122,40 @@ frechet_taks_feature <- function(ale_curves,
 }
 
 
-frechet_summary <- function(frechet_results){
-  return(
-    map(frechet_results, 
-        function(x) data.frame(task1 = x$task1,
-                               task2 = x$task2,
-                               f1 = x$f1,
-                               f2 = x$f2,
-                               dist_frechet = x$frechet$Dist_frechet
-        )
-    ) %>% 
+frechet_task_var_summary <- function(frechet_results){
+  
+  
+    df <- map(frechet_results, 
+              function(x) data.frame(task1 = x$task1,
+                                     task2 = x$task2,
+                                     f1 = x$f1,
+                                     f2 = x$f2,
+                                     dist_frechet = x$frechet$Dist_frechet
+                                     ) %>% 
+                left_join(
+                  data.frame(importance = x$imp) %>%
+                    rownames_to_column(var = "f1"),
+                  by = "f1"
+                  )
+              ) %>% 
       list_rbind() %>% 
       as_tibble()
-  )
+    
+    df <- df %>% 
+      group_by(task1, task2, f1) %>% 
+      filter(dist_frechet == min(dist_frechet)) %>% 
+      ungroup() %>% 
+      mutate(wdist = dist_frechet*importance)
+      
+  return(df)
 }
 
 
-importance <- function(df, 
-                       model = randomForest, 
-                       predictors = "all",
-                       response = "y"){
-  
-  list_importance <- list()
-  for (task in unique(df$id_task)){
-    df_task <- df[df$id_task == task, ]
-    df_task$id_task <- NULL
-    
-    if (predictors[1] == "all") 
-      predictors <- names(df_task)[names(df_task) != response]
-    
-    mod <- model(
-      reformulate(response = response, termlabels = predictors),
-      data = df_task,
-      importance = TRUE
-    )
-    
-    imp <- mod$importance[, "IncNodePurity"]
-    
-    list_importance[[task]] <- imp/sum(imp)
-  }
-  
-  return(list_importance)
+frechet_task_summary <- function(frechet_results){
+  frechet_task_var_summary(frechet_results) %>% 
+    group_by(task1, task2) %>% 
+    summarise(similarity = sum(wdist)) %>% 
+    ungroup() %>% 
+    arrange(task1, similarity) %>% 
+    return()
 }

@@ -3,14 +3,13 @@
 #' 
 
 
+source("src/01-tasks_data_generation.R")
+
 library(tidyverse)
-library(latex2exp)
 
 
-# names(tasks_data)[1:5] <- TeX(paste0("X_", 1:5))
 
-
-p <- tasks_data %>% 
+tasks_data %>% 
   mutate(id_task = paste("Task:", id_task)) %>% 
   dplyr::select(-y) %>% 
   pivot_longer(cols = !id_task) %>% 
