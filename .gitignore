@@ -27,5 +27,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 meta-explain.Rproj
-
 /src/garbage.R
+*.zip

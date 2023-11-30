@@ -19,7 +19,7 @@ ale_t_x <- readRDS(file = "data/ale_by_task_var.RDS")
 
 df <- ale_t_x %>% 
   mutate(
-    task = paste("Task:", task),
+    task = paste("Task", task),
     task2 = "1",
     n2 = n/1000,
     ymax = ale +  2*n2,
@@ -55,6 +55,7 @@ p2 <- df %>%
   labs(y = "",
        x = ""
   ) +
+  theme_minimal() +
   theme(
     strip.text = element_text(size = 6),
     axis.text.y = element_blank(),
@@ -74,6 +75,7 @@ p3 <- df %>%
   labs(y = "",
        x = ""
   ) +
+  theme_minimal() +
   theme(
     strip.text = element_text(size = 6),
     axis.text.y = element_blank(),
@@ -93,6 +95,7 @@ p4 <- df %>%
   labs(y = "",
        x = ""
   ) +
+  theme_minimal() +
   theme(
     strip.text = element_text(size = 6),
     axis.text.y = element_blank(),
@@ -111,6 +114,7 @@ p5 <- df %>%
   labs(y = "",
        x = ""
   ) +
+  theme_minimal() +
   theme(
     strip.text = element_text(size = 6),
     axis.text.y = element_blank(),
@@ -120,7 +124,7 @@ p5 <- df %>%
     strip.background = element_rect(fill = "gray90", color = NA)
   )
 
-p <- p1 + p2 + p3 + p4 + p5 + plot_layout(ncol = 5)
+p <- p1 + p2 + p3 + p4 + p5 + plot_layout(ncol = 5) & theme(plot.margin = margin(0, 0, 0, 0, "cm"))
 
 
 # ALE curves by variable (all curves grouped by var)

@@ -52,16 +52,24 @@ df <- bind_rows(df3, df4) %>%
 
 # LATEX TABLE -------------------------------------------------------------
 
-df %>% 
+df <- df %>% 
   select(task1, 
          f1, 
          "Task: 1", "Task: 2", "Task: 3", "Task: 4", "Task: 5",
-         importance) %>% 
+         importance) 
+
+
+df %>% 
+  filter(f1 != "Similarity") %>% 
+  group_by(task1) %>% 
+  summarise(across(`Task: 1`:`Task: 5`, sum))
+
+df %>% 
   mutate(
     across(where(is.numeric), ~round(.x, digits = 2)), 
     across(everything(), as.character),
     across(everything(), ~ifelse(is.na(.x), "-", .x))
-  ) %>%
+  ) %>% 
   select(-task1) %>% 
   kbl(format = "latex", 
       align = "rcccccc",
