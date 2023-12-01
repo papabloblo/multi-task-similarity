@@ -112,7 +112,7 @@ frechet_tasks_feature <- function(ale_curves,
                                        f1 = features$feature1[f],
                                        f2 = features$feature2[f],
                                        frechet = res,
-                                       importance = importance[[task1]]
+                                       imp = importance[[task1]]
                                        )
         
       }

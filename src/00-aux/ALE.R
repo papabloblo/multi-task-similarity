@@ -158,22 +158,6 @@ ale_plot <- function(ale_by_var, df_original, features = "all", point = FALSE) {
 }
 
 
-ale_plots <- function(df, 
-                      response = "y",
-                      predictors = "all",
-                      model = randomForest,...){
-  
-  if (predictors[1] == "all") 
-    predictors <- names(df)[names(df) != response]
-  
-  mod <- model(
-    reformulate(response = response, termlabels = predictors),
-    data = df
-  )
-  
-  return(ale(df, mod, features = predictors,...))
-}
-
 
 ale_by_task_feature <- function(df, model = randomForest,...) {
   
@@ -181,7 +165,7 @@ ale_by_task_feature <- function(df, model = randomForest,...) {
   for (task in unique(df$id_task)){
     df_task <- df[df$id_task == task, ]
     df_task$id_task <- NULL
-    list_ales[[task]] <- ale_plots(df_task, model = model,...)
+    list_ales[[task]] <- ale(df, model = model[[task]]$model, ...)
   }
   
   if (is.null(names(list_ales))) names(list_ales) <- 1:length(list_ales)
@@ -197,32 +181,4 @@ ale_by_task_feature <- function(df, model = randomForest,...) {
   
   return(bind_rows(aux))
 
-}
-
-
-importance <- function(df, 
-                       model = randomForest, 
-                       predictors = "all",
-                       response = "y"){
-  
-  list_importance <- list()
-  for (task in unique(df$id_task)){
-    df_task <- df[df$id_task == task, ]
-    df_task$id_task <- NULL
-    
-    if (predictors[1] == "all") 
-      predictors <- names(df_task)[names(df_task) != response]
-    
-    mod <- model(
-      reformulate(response = response, termlabels = predictors),
-      data = df_task,
-      importance = TRUE
-    )
-    
-    imp <- mod$importance[, "IncNodePurity"]
-    
-    list_importance[[task]] <- imp/sum(imp)
-  }
-  
-  return(list_importance)
 }

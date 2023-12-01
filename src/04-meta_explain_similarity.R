@@ -5,24 +5,28 @@
 
 
 # DEPENDENCIES ------------------------------------------------------------
-
-library(tidyverse)
-library(randomForest)
-library(kableExtra)
+suppressMessages(library(R.utils, quietly = TRUE))
+suppressMessages(library(tidyverse, quietly = TRUE))
 
 source("src/frechet/frechet.R")
 
+cmd <- cmdArgs()
+
 # LOAD ALE CURVES ---------------------------------------------------------
 
-ale_curves <- read_rds("data/ale_by_task_var.RDS")
-df <- read_csv("data/tasks_data.csv")
-imp <- readRDS("data/importance.RDS")
+ale_curves <- read_rds(cmd$ale_curves)
+models <- readRDS(cmd$models)
 
 
 # FRECHET DISTANCE --------------------------------------------------------
 
 # weight function for Frechet distance
 fweight <- function(n1, n2) min(n1, n2)/max(n1, n2)
+
+imp <- list()
+for (task in names(models)){
+  imp[[task]] <- models[[task]]$importance
+}
 
 # compute Frechet distance
 frechet_results <- frechet_tasks_feature(ale_curves,
@@ -40,12 +44,12 @@ similarity_task_summary <- frechet_task_summary(frechet_results)
 
 saveRDS(
   similarity_task_var_summary, 
-  "data/similarity/similarity_task_var_summary.RDS"
+  cmd$task_var_similarity
   )
 
 saveRDS(
   similarity_task_summary, 
-  "data/similarity/similarity_task_summary.RDS"
+  cmd$task_similarity
 )
 
 
