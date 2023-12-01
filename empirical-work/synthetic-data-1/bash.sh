@@ -30,12 +30,18 @@ folder="empirical-work/synthetic-data-1"
 #         --task_similarity $folder/data/similarity/similarity_task_summary.RDS
 #         
 #         
-echo "Results: ALE plots"
-Rscript src/plots/ale_plots.R \
-        --ale_curves $folder/data/ale_by_task_var.RDS \
-        --out_plot $folder/plots/ale_plots.png \
-        --ymax 4.5 \
-        --ymin=-4.5 \
-        --ribbon 1\
-        --width 25 \
-        --height 20 
+# echo "Results: ALE plots"
+# Rscript src/plots/ale_plots.R \
+#         --ale_curves $folder/data/ale_by_task_var.RDS \
+#         --out_plot $folder/plots/ale_plots.png \
+#         --ymax 4.5 \
+#         --ymin=-4.5 \
+#         --ribbon 1\
+#         --width 25 \
+#         --height 20 
+#         
+echo "Results: Latex tables"
+Rscript src/tables/similarity-table-latex.R \
+         --task_var_similarity $folder/data/similarity/similarity_task_var_summary.RDS \
+         --task_similarity $folder/data/similarity/similarity_task_summary.RDS \
+         --out_table $folder/latex-tables/similarity.txt

@@ -1,0 +1,51 @@
+\begin{table}
+
+\caption{Group Rows}
+\centering
+\begin{tabular}[t]{rcccccc}
+\toprule
+f1 & Task: 1 & Task: 2 & Task: 3 & Task: 4 & Task: 5 & importance\\
+\midrule
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 1}}\\
+\hspace{1em}Similarity & - & 13.72 & \textbf{5.65} & 8.69 & 13.58 & -\\
+\hspace{1em}x1 & - & 3.46 & 3.45 & 3.23 & \textbf{2.66} & 0.18\\
+\hspace{1em}x2 & - & 5.1 & 5.07 & 4.2 & \textbf{3.36} & 0.19\\
+\hspace{1em}x3 & - & 1.4 & \textbf{1.24} & 1.74 & 1.58 & 0.09\\
+\hspace{1em}x4 & - & 13.66 & \textbf{5.2} & 5.82 & 16.12 & 0.26\\
+\hspace{1em}x5 & - & 30.23 & \textbf{9.27} & 20.14 & 29.09 & 0.28\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 2}}\\
+\hspace{1em}Similarity & 16.37 & - & 16.03 & 13.07 & \textbf{10.3} & -\\
+\hspace{1em}x1 & \textbf{3.46} & - & 4.2 & 4.11 & 3.62 & 0.17\\
+\hspace{1em}x2 & 5.1 & - & \textbf{2.85} & 3.03 & 3.22 & 0.17\\
+\hspace{1em}x3 & 1.4 & - & 1.59 & 1.17 & \textbf{0.81} & 0.08\\
+\hspace{1em}x4 & 13.66 & - & 12.01 & 11.54 & \textbf{4.92} & 0.16\\
+\hspace{1em}x5 & 30.23 & - & 30.65 & 23.76 & \textbf{19.82} & 0.42\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 3}}\\
+\hspace{1em}Similarity & \textbf{5.81} & 13.92 & - & 6.24 & 14.34 & -\\
+\hspace{1em}x1 & 3.45 & 4.2 & - & 3.14 & \textbf{3.09} & 0.19\\
+\hspace{1em}x2 & 5.07 & \textbf{2.85} & - & 3.56 & 3.62 & 0.19\\
+\hspace{1em}x3 & \textbf{1.24} & 1.59 & - & 1.67 & 1.46 & 0.09\\
+\hspace{1em}x4 & 5.2 & 12.01 & - & \textbf{2.89} & 14.47 & 0.21\\
+\hspace{1em}x5 & \textbf{9.27} & 30.65 & - & 13.02 & 30.59 & 0.32\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 4}}\\
+\hspace{1em}Similarity & 9.42 & 11.89 & \textbf{6.25} & - & 12.3 & -\\
+\hspace{1em}x1 & 3.23 & 4.11 & 3.14 & - & \textbf{1.79} & 0.17\\
+\hspace{1em}x2 & 4.2 & 3.03 & 3.56 & - & \textbf{2.24} & 0.18\\
+\hspace{1em}x3 & 1.74 & \textbf{1.17} & 1.67 & - & 1.35 & 0.08\\
+\hspace{1em}x4 & 5.82 & 11.54 & \textbf{2.89} & - & 14.02 & 0.24\\
+\hspace{1em}x5 & 20.14 & 23.76 & \textbf{13.02} & - & 24.75 & 0.33\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 5}}\\
+\hspace{1em}Similarity & 12.82 & \textbf{7.33} & 12.76 & 10.8 & - & -\\
+\hspace{1em}x1 & 2.66 & 3.62 & 3.09 & \textbf{1.79} & - & 0.19\\
+\hspace{1em}x2 & 3.36 & 3.22 & 3.62 & \textbf{2.24} & - & 0.19\\
+\hspace{1em}x3 & 1.58 & \textbf{0.81} & 1.46 & 1.35 & - & 0.09\\
+\hspace{1em}x4 & 16.12 & \textbf{4.92} & 14.47 & 14.02 & - & 0.31\\
+\hspace{1em}x5 & 29.09 & \textbf{19.82} & 30.59 & 24.75 & - & 0.22\\
+\bottomrule
+\end{tabular}
+\end{table}
