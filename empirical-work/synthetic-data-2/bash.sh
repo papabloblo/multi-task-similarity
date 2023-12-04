@@ -1,6 +1,6 @@
 #!/bin/bash
 
-folder="empirical-work/synthetic-data-1"
+folder="empirical-work/synthetic-data-2"
 
 mkdir -p $folder/data/similarity
 mkdir -p $folder/plots
@@ -30,7 +30,7 @@ echo "Step 4: Multi-task similarity"
 Rscript src/04-meta_explain_similarity.R \
         --ale_curves $folder/data/ale_by_task_var.RDS \
         --models $folder/data/models.RDS \
-        --same_features TRUE\
+        --same_features FALSE\
         --similarity $folder/data/similarity/similarity.RDS \
         --task_var_similarity $folder/data/similarity/similarity_task_var_summary.RDS \
         --task_similarity $folder/data/similarity/similarity_task_summary.RDS
@@ -39,13 +39,13 @@ Rscript src/04-meta_explain_similarity.R \
 echo "Results: ALE plots"
 Rscript src/plots/ale_plots.R \
         --ale_curves $folder/data/ale_by_task_var.RDS \
-        --out_plot $folder/plots/ale_synthetic1.png \
+        --out_plot $folder/plots/ale_synthetic2.png \
         --ymax 4 \
         --ymin=-4 \
         --ribbon 2\
         --width 25 \
         --height 20\
-        --free_x FALSE
+        --free_x TRUE
 
 echo "Results: Latex tables"
 Rscript src/tables/similarity-table-latex.R \
