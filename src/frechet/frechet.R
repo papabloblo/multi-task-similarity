@@ -68,14 +68,8 @@ frechet_tasks_feature <- function(ale_curves,
                                  fweight,
                                  importance,
                                  fdist = euclid_dist,
-                                 same_features = TRUE, 
-                                 std = TRUE) {
+                                 same_features = TRUE) {
   
-  if (std){
-    ale_curves <- ale_curves %>% 
-      group_by(feature) %>% 
-      mutate(x = (x - mean(x))/sd(x))  
-  }
   
   tasks <- unique(ale_curves$task)
   
@@ -121,25 +115,29 @@ frechet_tasks_feature <- function(ale_curves,
   return(frechet_results)
 }
 
+sim_task_feature_df <- function(frechet_results){
+  map(frechet_results, 
+            function(x) data.frame(task1 = x$task1,
+                                   task2 = x$task2,
+                                   f1 = x$f1,
+                                   f2 = x$f2,
+                                   dist_frechet = x$frechet$Dist_frechet
+            ) %>% 
+              left_join(
+                data.frame(importance = x$imp) %>%
+                  rownames_to_column(var = "f1"),
+                by = "f1"
+              )
+  ) %>% 
+    list_rbind() %>% 
+    as_tibble()
+}
+
 
 frechet_task_var_summary <- function(frechet_results){
   
   
-    df <- map(frechet_results, 
-              function(x) data.frame(task1 = x$task1,
-                                     task2 = x$task2,
-                                     f1 = x$f1,
-                                     f2 = x$f2,
-                                     dist_frechet = x$frechet$Dist_frechet
-                                     ) %>% 
-                left_join(
-                  data.frame(importance = x$imp) %>%
-                    rownames_to_column(var = "f1"),
-                  by = "f1"
-                  )
-              ) %>% 
-      list_rbind() %>% 
-      as_tibble()
+    df <- sim_task_feature_df(frechet_results)
     
     df <- df %>% 
       group_by(task1, task2, f1) %>% 
