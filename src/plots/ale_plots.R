@@ -16,7 +16,7 @@ cmd <- cmdArgs()
 # READING DATA ------------------------------------------------------------
 
 ale_t_x <- readRDS(file = cmd$ale_curves)
-
+# ale_t_x <- readRDS("empirical-work/synthetic-data-2/data/ale_by_task_var.RDS")
 
 # PLOTS -------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ df <- ale_t_x %>%
 
 
 plot_by_feature <- function(f){
-  df %>% 
+  p <- df %>% 
     filter(feature == f) %>% 
     ggplot(aes(y = ale, x = x)) +
     geom_ribbon(aes(group = task2, ymax = ymax, ymin = ymin), 
@@ -43,7 +43,7 @@ plot_by_feature <- function(f){
                 ) +
     geom_line(aes(group = task2)) +
     scale_y_continuous(limits = c(cmd$ymin, cmd$ymax)) +
-    facet_wrap(. ~ task + feature, ncol = 1) +
+    
     labs(y = "",
          x = ""
     ) +
@@ -54,6 +54,13 @@ plot_by_feature <- function(f){
       strip.background = element_rect(fill = "gray90", color = NA),
       plot.margin = margin(0, 0, 0, 0, "cm")
     )
+  
+  if (cmd$free_x){
+    p <- p + facet_wrap(. ~ task + feature, ncol = 1, scales = "free_x")
+  } else{
+    p <- p + facet_wrap(. ~ task + feature, ncol = 1)
+  }
+  return(p)
 }
 
 p1 <- plot_by_feature("x1")
