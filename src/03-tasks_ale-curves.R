@@ -22,6 +22,8 @@ source("src/00-aux/ALE.R")
 df <- readRDS(cmd$tasks_data)
 model <- readRDS(cmd$models)
 
+# df <- readRDS("empirical-work/synthetic-data-2/data/tasks_data.RDS")
+# model <- readRDS("empirical-work/synthetic-data-2/data/models.RDS")
 # TRAINING AND ALE COMPUTATION --------------------------------------------
 
 features <- c("x1", "x2", "x3", "x4", "x5")

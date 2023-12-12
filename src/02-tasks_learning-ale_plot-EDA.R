@@ -13,6 +13,7 @@ library(tidyverse)
 # READING DATA ------------------------------------------------------------
 
 ale_t_x <- readRDS(file = "data/ale_by_task_var.RDS")
+ale_t_x <- readRDS(file = "empirical-work/synthetic-data-1/data/ale_by_task_var.RDS")
 
 
 # PLOTS -------------------------------------------------------------------
@@ -33,7 +34,7 @@ p1 <- df %>%
   ggplot(aes(y = ale, x = x)) +
   geom_ribbon(aes(group = task2, ymax = ymax, ymin = ymin), alpha = 0.5) +
   geom_line(aes(group = task2)) +
-  scale_y_continuous(limits = c(-4,4)) +
+  # scale_y_continuous(limits = c(-4,4)) +
   facet_wrap(. ~ task + feature, ncol = 1) +
   labs(y = "",
        x = ""
@@ -90,7 +91,7 @@ p4 <- df %>%
   ggplot(aes(y = ale, x = x)) +
   geom_ribbon(aes(group = task2, ymax = ymax, ymin = ymin), alpha = 0.5) +
   geom_line(aes(group = task2)) +
-  scale_y_continuous(limits = c(-4,4)) +
+  # scale_y_continuous(limits = c(-4,4)) +
   facet_wrap(. ~ task + feature, ncol = 1) +
   labs(y = "",
        x = ""
