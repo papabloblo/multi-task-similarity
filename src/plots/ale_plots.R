@@ -13,11 +13,17 @@ suppressMessages(library(patchwork))
 
 cmd <- cmdArgs()
 
+# cmd <- list(ribbon = 2,
+#             ymax = 4,
+#             ymin = -4,
+#             free_x = TRUE)
+
 # READING DATA ------------------------------------------------------------
 
 ale_t_x <- readRDS(file = cmd$ale_curves)
-# ale_t_x <- readRDS("empirical-work/synthetic-data-2/data/ale_by_task_var.RDS")
-
+# ale_t_x <- readRDS("empirical-work/real-data/data/ale_by_task_var.RDS")
+# ale_t_x <- ale_t_x %>%
+#   filter(task %in%  c("1", "2", "3"))
 # PLOTS -------------------------------------------------------------------
 
 df <- ale_t_x %>% 
@@ -63,6 +69,8 @@ plot_by_feature <- function(f){
   return(p)
 }
 
+
+p1 <- plot_by_feature("test_time")
 p1 <- plot_by_feature("x1")
 p2 <- plot_by_feature("x2")
 p3 <- plot_by_feature("x3")
