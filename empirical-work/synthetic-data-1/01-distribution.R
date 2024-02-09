@@ -51,7 +51,7 @@ p2 <- ggplot(df, aes(x = x5, y = id_task, group = id_task)) +
 p1 + p2
 
 
-df %>% 
+p <- df %>% 
   select(-y) %>% 
   pivot_longer(!id_task, names_to = "var", values_to = "val") %>% 
   mutate(id_task = paste("Task", id_task)) %>% 
@@ -66,3 +66,11 @@ df %>%
   theme(
     panel.grid = element_blank(),
     axis.text.x = element_blank())
+
+
+ggsave("empirical-work/synthetic-data-1/plots/densities-synthetic1.png", 
+       plot = p,
+       dpi = "print",
+       width = 20,
+       height = 5,
+       units = "cm")
