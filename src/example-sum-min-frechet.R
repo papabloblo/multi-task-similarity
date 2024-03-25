@@ -24,7 +24,7 @@ df <- tibble(
   y3 = (x + 4)*x*(x - 4) + 25,
   y4 = case_when(
    x < -4 ~ y2,
-   x <= 4 ~ y1*1.1,
+   x <= 4 ~ y1*1.2,
    x > 4 ~ y2
   ),
   
@@ -33,10 +33,11 @@ df <- tibble(
 
 df %>% 
   ggplot(aes(x = x)) +
-  geom_line(aes(y = y1, color = "y1")) +
+  geom_line(aes(y = y1), size = 2) +
   # geom_line(aes(y = y2, color = "y2")) +
-  geom_line(aes(y = y3, color = "y3")) +
-  geom_line(aes(y = y4, color = "y4"))
+  geom_line(aes(y = y3), linetype = 2) +
+  geom_line(aes(y = y4), linetype = "dotted") +
+  theme_minimal() 
 
 
 
