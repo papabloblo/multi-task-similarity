@@ -31,14 +31,26 @@ df <- tibble(
   )
 
 
-df %>% 
+p <- df %>% 
   ggplot(aes(x = x)) +
-  geom_line(aes(y = y1), size = 2) +
+  geom_line(aes(y = y1), linewidth = 1.5) +
   # geom_line(aes(y = y2, color = "y2")) +
-  geom_line(aes(y = y3), linetype = 2) +
+  geom_line(aes(y = y3), linetype = "dashed") +
   geom_line(aes(y = y4), linetype = "dotted") +
-  theme_minimal() 
+  geom_label(aes(x = 5, y = 45), label = 1) +
+  geom_label(aes(x = 5, y = 68), label = 2) +
+  geom_label(aes(x = 5, y = 85), label = 3) +
+  scale_x_continuous(breaks = seq(-5, 5, by = 1)) +
+  theme_minimal() +
+  labs(x = "X",
+       y = "Y")
 
+
+ggsave(p, file = "plots/example-sum-mi-frechet.png", 
+       dpi = "print",
+       width = 25,
+       height = 10,
+       units = "cm")
 
 
 frechet2 <- function(y1, y2, SumOrMax){
