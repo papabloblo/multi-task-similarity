@@ -19,10 +19,19 @@ models <- readRDS(cmd$models)
 # cmd <- list(same_features = FALSE)
 # models <- readRDS("empirical-work/synthetic-data-2/data/models.RDS")
 # ale_curves <- readRDS("empirical-work/synthetic-data-2/data/ale_by_task_var.RDS")
+
+# PROOF!!!!!
+ale_curves <- ale_curves %>% 
+  group_by(task, feature) %>% 
+  mutate(n = n/sum(n)) %>% 
+  ungroup()
+
+
 # FRECHET DISTANCE --------------------------------------------------------
 
 # weight function for Frechet distance
-fweight <- function(n1, n2) min(n1, n2)/max(n1, n2)
+fweight <- function(n1, n2) max(n1, n2)/min(n1, n2)
+# fweight <- function(n1, n2) min(n1, n2)
 
 imp <- list()
 for (task in names(models)){
