@@ -23,6 +23,9 @@ Rscript src/02-tasks_training.R \
 echo "Step 3: Computing ALE curves"
 Rscript src/03-tasks_ale-curves.R \
           --tasks_data $folder/data/tasks_data.RDS \
+          --id_task id_task \
+          --response y\
+          --n 50\
           --models $folder/data/models.RDS \
           --out_file $folder/data/ale_by_task_var.RDS
 

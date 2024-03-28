@@ -69,7 +69,7 @@ ggsave(p,
 #' the vast majority of the other patients.
 
 similarity %>% 
-  filter(task1 %in% c("15", "11")) %>% 
+  filter(task1 %in% c("14", "15")) %>% 
   View()
 
 
@@ -143,7 +143,7 @@ plot_ale_similar <- function(task_orig,
          x = ""
     ) +
     theme_minimal() +
-    scale_y_continuous(limits = limits_y, n.breaks = n.breaks) + 
+    scale_y_continuous(limits = limits_y, n.breaks = n.breaks_x) + 
     scale_x_continuous(n.breaks = n.breaks_x) +
     scale_color_manual(values = c("1" = "gray25", "0" = "gray80")) + 
     scale_fill_manual(values = c("1" = "gray25", "0" = "gray80")) + 

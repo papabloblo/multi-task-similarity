@@ -20,18 +20,19 @@
       "f": "rnormMix",
       "args": {
         "mean1": 0,
-        "sd1": 0.15,
+        "sd1": 0.1,
         "mean2": 0,
-        "sd2": 0.15,
+        "sd2": 0.1,
         "n": 10000
       }
     },
     "x5": {
-      "f": "rsn",
+      "f": "rnormMix",
       "args": {
-        "omega": 0.25,
-        "alpha": -4,
-        "xi": 0.25,
+        "mean1": 0,
+        "sd1": 0.1,
+        "mean2": 0,
+        "sd2": 0.1,
         "n": 10000
       }
     },
@@ -57,21 +58,23 @@
     "f": "rnormMix",
     "args": {
       "mean1": 0,
-      "sd1": 0.15,
+      "sd1": 0.1,
       "mean2": 0,
-      "sd2": 0.15,
+      "sd2": 0.1,
       "n": 10000
     }
   },
   "x5": {
-    "f": "rsn",
+     "f": "rnormMix",
     "args": {
-      "omega": 0.25,
-      "alpha": -2,
+      "mean1": 0,
+      "sd1": 0.1,
+      "mean2": 0,
+      "sd2": 0.1,
       "n": 10000
     }
   },
-  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(-x4**2 - x5**2 - x4*x5)"
+  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(x4**2 + x5**2 - x4*x5)"
 },
 {
   "id_task": "3",
@@ -100,14 +103,16 @@
     }
   },
   "x5": {
-    "f": "rsn",
+     "f": "rnormMix",
     "args": {
-      "omega": 0.25,
-      "alpha": 0,
+      "mean1": -0.25,
+      "sd1": 0.1,
+      "mean2": 0.25,
+      "sd2": 0.1,
       "n": 10000
     }
   },
-  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(x4**2 + x5**2 - x4*x5)"
+  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(x4**2 - x5**2 + x4*x5)"
 },
 {
   "id_task": "4",
@@ -125,25 +130,27 @@
       "n": 10000
     }
   },
-   "x4": {
+  "x4": {
     "f": "rnormMix",
     "args": {
-      "mean1": -0.25,
+      "mean1": 0,
       "sd1": 0.1,
-      "mean2": 0.25,
+      "mean2": 0,
       "sd2": 0.1,
       "n": 10000
     }
   },
  "x5": {
-    "f": "rsn",
+     "f": "rnormMix",
     "args": {
-      "omega": 0.25,
-      "alpha": 2,
+      "mean1": 0,
+      "sd1": 0.1,
+      "mean2": 0,
+      "sd2": 0.1,
       "n": 10000
     }
   },
-  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(x4**2 + x5**2 - x4*x5)"
+  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(-x4**2 + x5**2 + x4*x5)"
 },
 {
   "id_task": "5",
@@ -172,15 +179,16 @@
     }
   },
  "x5": {
-    "f": "rsn",
+     "f": "rnormMix",
     "args": {
-      "omega": 0.25,
-      "alpha": 4,
-      "xi": -0.25,
+      "mean1": -0.25,
+      "sd1": 0.1,
+      "mean2": 0.25,
+      "sd2": 0.1,
       "n": 10000
     }
   },
-  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(- x4**2 - x5**2 - x4*x5)"
+  "y": "function(x1, x2, x3, x4, x5) rastrigin(x1, x2) + std(- x4**2 - x5**2 + x4*x5)"
 }
   ]
 }
