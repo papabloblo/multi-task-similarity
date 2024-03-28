@@ -10,6 +10,7 @@
 suppressMessages(library(R.utils))
 suppressMessages(library(tidyverse))
 suppressMessages(library(patchwork))
+suppressMessages(library(latex2exp))
 
 cmd <- cmdArgs()
 
@@ -43,6 +44,14 @@ df <- ale_t_x %>%
 plot_by_feature <- function(f){
   p <- df %>% 
     filter(feature == f) %>% 
+    mutate(feature = case_when(
+      feature == "x1" ~ TeX(r"($X_1$)", output = "character"),
+      feature == "x2" ~ TeX(r"($X_2$)", output = "character"),
+      feature == "x3" ~ TeX(r"($X_3$)", output = "character"),
+      feature == "x4" ~ TeX(r"($X_4$)", output = "character"),
+      feature == "x5" ~ TeX(r"($X_5$)", output = "character")
+      )
+    ) %>% 
     ggplot(aes(y = ale, x = x)) +
     geom_ribbon(aes(group = task2, ymax = ymax, ymin = ymin), 
                 alpha = 0.5
@@ -62,9 +71,9 @@ plot_by_feature <- function(f){
     )
   
   if (cmd$free_x){
-    p <- p + facet_wrap(. ~ task + feature, ncol = 1, scales = "free_x")
+    p <- p + facet_wrap(. ~ TeX(task, output = "character") + feature, labeller = label_parsed,  ncol = 1, scales = "free_x")
   } else{
-    p <- p + facet_wrap(. ~ task + feature, ncol = 1)
+    p <- p + facet_wrap(. ~ TeX(task, output = "character") + feature, labeller = label_parsed,  ncol = 1)
   }
   return(p)
 }
