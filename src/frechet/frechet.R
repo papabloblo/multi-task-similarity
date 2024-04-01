@@ -58,7 +58,8 @@ frechet <- function(Px, Py,
   }
   return(
     list(Dist_frechet = Mfret[maxP, maxQ],
-         Mfret = Mfret, Mdist = Mdist
+         Mfret = Mfret, 
+         Mdist = Mdist
          )
     )
 }
