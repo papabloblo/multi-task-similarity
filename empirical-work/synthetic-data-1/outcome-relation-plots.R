@@ -8,9 +8,33 @@ library(tidyverse)
 library(plotly)
 library(processx)
 
+# install.packages('reticulate')
+# reticulate::install_miniconda()
+# reticulate::conda_install('r-reticulate', 'python-kaleido')
+# reticulate::conda_install('r-reticulate', 'plotly', channel = 'plotly')
+reticulate::use_miniconda('r-reticulate')
 source("src/00-aux/aux_data_generation.R")
 
 
+
+surface_plot <- function(x1, x2, z, path){
+  remove_axes <- list(title = "", showticklabels= FALSE)  
+  
+  fig <- plot_ly(x = x1, y = x2, z = z) %>% 
+    add_surface(showscale = FALSE) %>% 
+    layout(
+      scene = list(
+        xaxis=remove_axes,
+        yaxis=remove_axes,
+        zaxis = remove_axes
+      )
+    )
+  
+  save_image(fig, 
+             file = path,
+             scale = 3
+  )
+}
 
 
 # RASTRIGIN FUNCTION ------------------------------------------------------
@@ -39,7 +63,8 @@ df$z <- rastrigin(df$x1, df$x2)
 p <- ggplot(df, aes(x = x1, y = x2, z = z)) +
   geom_contour_filled() +
   geom_contour(color = "white") +
-  theme_minimal()
+  theme_void() +
+  theme(legend.position = "none")
 
 
 # ggplot(df, aes(x = x1, y = x2, z = z)) +
@@ -59,36 +84,26 @@ ggsave("empirical-work/synthetic-data-1/plots/rastrigin-contour.png",
 ## 3D SURFACE PLOT ---------------------------------------------------------
 
 z <- matrix(data = df$z, nrow = 1000, ncol = 1000)
-fig <- plot_ly(x = x1, y = x2, z = z) %>% add_surface()
-fig
 
+
+
+surface_plot(x1, x2, z, 
+             path = "empirical-work/synthetic-data-1/plots/rastrigin-surface.png"
+               )
 save_image(fig, 
      file = "empirical-work/synthetic-data-1/plots/rastrigin-surface.png",
      scale = 3
      )
 
 
-# install.packages('reticulate')
-reticulate::install_miniconda()
-reticulate::conda_install('r-reticulate', 'python-kaleido')
-reticulate::conda_install('r-reticulate', 'plotly', channel = 'plotly')
-reticulate::use_miniconda('r-reticulate')
+
 
 
 
 
 # QUADRATIC FORM ----------------------------------------------------------
 
-params <- list(
-  task1 = list(a = 1, b = 1, c = 1),
-  task2 = list(a = -1, b = -1, c = -1),
-  task3 = list(a = 1, b = 1, c = -1),
-  task4 = list(a = 1, b = 1, c = -1),
-  task5 = list(a = -1, b = -1, c = -1)
-)
 
-
-params$task1
 n <- 1000
 x1 <- seq(-.5, .5, length.out = n)
 x2 <- seq(-.5, .5, length.out = n)
@@ -108,120 +123,64 @@ tf5$y <- -tf5$x1**2 - tf5$x2**2 + tf5$x1*tf5$x2
 
 
 ## CONTOUR PLOT ------------------------------------------------------------
+plot_contour <- function(df, path){
+  p <- ggplot(df, aes(x = x1, y = x2, z = y)) +
+    geom_contour_filled() +
+    geom_contour(color = "white") +
+    theme_void() +
+    theme(legend.position = "none")
+  
+  ggsave(path,
+         plot = p,
+         width = 20,
+         height = 15,
+         units = "cm",
+         dpi = "print")
+}
+
+plot_contour(tf1,
+             "empirical-work/synthetic-data-1/plots/quadratic-contour-task1.png")
+
+plot_contour(tf2,
+             "empirical-work/synthetic-data-1/plots/quadratic-contour-task2.png")
+
+plot_contour(tf3,
+             "empirical-work/synthetic-data-1/plots/quadratic-contour-task3.png")
+
+plot_contour(tf4,
+             "empirical-work/synthetic-data-1/plots/quadratic-contour-task4.png")
+
+plot_contour(tf5,
+             "empirical-work/synthetic-data-1/plots/quadratic-contour-task5.png")
 
 
-p <- ggplot(tf1, aes(x = x1, y = x2, z = y)) +
-  geom_contour_filled() +
-  geom_contour(color = "white") +
-  theme_minimal()
 
-
-ggsave("empirical-work/synthetic-data-1/plots/quadratic-contour-task1.png",
-       plot = p,
-       width = 20,
-       height = 15,
-       units = "cm",
-       dpi = "print")
-
-
-p <- ggplot(tf2, aes(x = x1, y = x2, z = y)) +
-  geom_contour_filled() +
-  geom_contour(color = "white") +
-  theme_minimal()
-
-
-ggsave("empirical-work/synthetic-data-1/plots/quadratic-contour-task2.png",
-       plot = p,
-       width = 20,
-       height = 15,
-       units = "cm",
-       dpi = "print")
-
-p <- ggplot(tf3, aes(x = x1, y = x2, z = y)) +
-  geom_contour_filled() +
-  geom_contour(color = "white") +
-  theme_minimal()
-
-
-ggsave("empirical-work/synthetic-data-1/plots/quadratic-contour-task3.png",
-       plot = p,
-       width = 20,
-       height = 15,
-       units = "cm",
-       dpi = "print")
-
-p <- ggplot(tf4, aes(x = x1, y = x2, z = y)) +
-  geom_contour_filled() +
-  geom_contour(color = "white") +
-  theme_minimal()
-
-
-ggsave("empirical-work/synthetic-data-1/plots/quadratic-contour-task4.png",
-       plot = p,
-       width = 20,
-       height = 15,
-       units = "cm",
-       dpi = "print")
-
-p <- ggplot(tf5, aes(x = x1, y = x2, z = y)) +
-  geom_contour_filled() +
-  geom_contour(color = "white") +
-  theme_minimal()
-
-
-ggsave("empirical-work/synthetic-data-1/plots/quadratic-contour-task5.png",
-       plot = p,
-       width = 20,
-       height = 15,
-       units = "cm",
-       dpi = "print")
-
+# PLOT SURFACE ------------------------------------------------------------
 
 
 
 z <- matrix(data = tf1$y, nrow = n, ncol = n)
-fig <- plot_ly(x = x1, y = x2, z = z) %>% add_surface()
-fig
-
-save_image(fig, 
-           file = "empirical-work/synthetic-data-1/plots/quadratic-task1.png",
-           scale = 3
-           )
-
+surface_plot(x1, x2, z, 
+             path = "empirical-work/synthetic-data-1/plots/quadratic-task1.png"
+             )
 
 z <- matrix(data = tf2$y, nrow = n, ncol = n)
-fig <- plot_ly(x = x1, y = x2, z = z) %>% add_surface()
-fig
-
-save_image(fig, 
-           file = "empirical-work/synthetic-data-1/plots/quadratic-task2.png",
-           scale = 3
-           )
+surface_plot(x1, x2, z, 
+             path = "empirical-work/synthetic-data-1/plots/quadratic-task2.png"
+)
 
 z <- matrix(data = tf3$y, nrow = n, ncol = n)
-fig <- plot_ly(x = x1, y = x2, z = z) %>% add_surface()
-
-
-save_image(fig, 
-           file = "empirical-work/synthetic-data-1/plots/quadratic-task3.png",
-           scale = 3
+surface_plot(x1, x2, z, 
+             path = "empirical-work/synthetic-data-1/plots/quadratic-task3.png"
 )
 
 z <- matrix(data = tf4$y, nrow = n, ncol = n)
-fig <- plot_ly(x = x1, y = x2, z = z) %>% add_surface()
-
-
-save_image(fig, 
-           file = "empirical-work/synthetic-data-1/plots/quadratic-task4.png",
-           scale = 3
+surface_plot(x1, x2, z, 
+             path = "empirical-work/synthetic-data-1/plots/quadratic-task4.png"
 )
-
 
 z <- matrix(data = tf5$y, nrow = n, ncol = n)
-fig <- plot_ly(x = x1, y = x2, z = z) %>% add_surface()
-
-
-save_image(fig, 
-           file = "empirical-work/synthetic-data-1/plots/quadratic-task5.png",
-           scale = 3
+surface_plot(x1, x2, z, 
+             path = "empirical-work/synthetic-data-1/plots/quadratic-task5.png"
 )
+

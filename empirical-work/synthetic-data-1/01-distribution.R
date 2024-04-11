@@ -82,7 +82,9 @@ p <- df %>%
          )) %>% 
   ggplot(aes(x = val, y = id_task, group = id_task)) +
   geom_density_ridges() +
-  facet_grid(~ var, labeller = label_parsed, scales = "free_x") +
+  facet_grid(~ var, 
+             labeller = label_parsed, 
+             scales = "free_x") +
   labs(
     y = "",
     x = ""

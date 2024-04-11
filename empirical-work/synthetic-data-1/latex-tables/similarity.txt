@@ -1,5 +1,5 @@
 \begin{table}
-
+\centering
 \caption{Similarity measures between variables and tasks. The last column shows the feature importance.}
 \centering
 \begin{tabular}[t]{rcccccc}
