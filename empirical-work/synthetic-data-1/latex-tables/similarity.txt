@@ -1,0 +1,51 @@
+\begin{table}
+\centering
+\caption{Similarity measures between variables and tasks. The last column shows the feature importance.}
+\centering
+\begin{tabular}[t]{rcccccc}
+\toprule
+f1 & Task 1 & Task 2 & Task 3 & Task 4 & Task 5 & importance\\
+\midrule
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 1}}\\
+\hspace{1em}$X_1$ & - & \textbf{10.41} & 14.31 & 13.03 & 11.71 & 0.19\\
+\hspace{1em}$X_2$ & - & \textbf{9.46} & 15.53 & 13.17 & 14 & 0.19\\
+\hspace{1em}$X_3$ & - & \textbf{1.75} & 2.22 & 2.42 & 3.19 & 0.09\\
+\hspace{1em}$X_4$ & - & \textbf{7.89} & 53.25 & 133.27 & 107.53 & 0.27\\
+\hspace{1em}$X_5$ & - & 4.73 & 123.69 & \textbf{3.44} & 117.92 & 0.26\\
+\hspace{1em}Similarity & - & \textbf{7.33} & 52.35 & 42.22 & 64.84 & -\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 2}}\\
+\hspace{1em}$X_1$ & \textbf{10.41} & - & 13.28 & 11.19 & 18.33 & 0.19\\
+\hspace{1em}$X_2$ & \textbf{9.46} & - & 20.99 & 11.32 & 10.68 & 0.19\\
+\hspace{1em}$X_3$ & 1.75 & - & 1.37 & \textbf{1.22} & 1.89 & 0.09\\
+\hspace{1em}$X_4$ & \textbf{7.89} & - & 50.5 & 134.59 & 113.98 & 0.27\\
+\hspace{1em}$X_5$ & \textbf{4.73} & - & 129.62 & 5.08 & 140.81 & 0.27\\
+\hspace{1em}Similarity & \textbf{7.29} & - & 54.68 & 41.78 & 73.72 & -\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 3}}\\
+\hspace{1em}$X_1$ & 14.31 & \textbf{13.28} & - & 14.5 & 13.73 & 0.19\\
+\hspace{1em}$X_2$ & \textbf{15.53} & 20.99 & - & 24.22 & 25.47 & 0.19\\
+\hspace{1em}$X_3$ & 2.22 & 1.37 & - & \textbf{0.93} & 1.66 & 0.09\\
+\hspace{1em}$X_4$ & 53.25 & \textbf{50.5} & - & 183.03 & 90.73 & 0.27\\
+\hspace{1em}$X_5$ & 123.69 & 129.62 & - & 123.33 & \textbf{2.51} & 0.27\\
+\hspace{1em}Similarity & 53.03 & 54.64 & - & 89.02 & \textbf{32.31} & -\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 4}}\\
+\hspace{1em}$X_1$ & 13.03 & \textbf{11.19} & 14.5 & - & 12.31 & 0.19\\
+\hspace{1em}$X_2$ & 13.17 & 11.32 & 24.22 & - & \textbf{9.51} & 0.19\\
+\hspace{1em}$X_3$ & 2.42 & 1.22 & \textbf{0.93} & - & 1.56 & 0.08\\
+\hspace{1em}$X_4$ & 133.27 & 134.59 & 183.03 & - & \textbf{41.08} & 0.28\\
+\hspace{1em}$X_5$ & \textbf{3.44} & 5.08 & 123.33 & - & 126.64 & 0.26\\
+\hspace{1em}Similarity & \textbf{42.76} & \textbf{42.76} & 90.49 & - & 49.1 & -\\
+\addlinespace[2em]
+\multicolumn{7}{l}{\textbf{Task 5}}\\
+\hspace{1em}$X_1$ & \textbf{11.71} & 18.33 & 13.73 & 12.31 & - & 0.19\\
+\hspace{1em}$X_2$ & 14 & 10.68 & 25.47 & \textbf{9.51} & - & 0.18\\
+\hspace{1em}$X_3$ & 3.19 & 1.89 & 1.66 & \textbf{1.56} & - & 0.09\\
+\hspace{1em}$X_4$ & 107.53 & 113.98 & 90.73 & \textbf{41.08} & - & 0.26\\
+\hspace{1em}$X_5$ & 117.92 & 140.81 & \textbf{2.51} & 126.64 & - & 0.27\\
+\hspace{1em}Similarity & 64.94 & 73.34 & \textbf{31.76} & 49.17 & - & -\\
+\bottomrule
+\end{tabular}
+\end{table}

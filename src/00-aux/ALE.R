@@ -23,11 +23,15 @@ quantiles_xALE <- function(df, features, n = 30, epsilon = 0.01){
 
 grid_xALE <- function(df, features, n = 30, epsilon = 0.01){
   xALE <- list()
-  for (f in features){
-    xALE[[f]] <- seq(from = min(df[[f]]) - epsilon,
-                     to = max(df[[f]]) + epsilon,
-                     length.out = n)
+  for (task in unique(df$id_task)){
+    for (f in features){
+      df_aux <- df[df$id_task == task,][[f]]
+      xALE[[task]][[f]] <- seq(from = min(df_aux) - epsilon,
+                       to = max(df_aux) + epsilon,
+                       length.out = n)
+    }  
   }
+  
   return(xALE)
 }
 
@@ -52,10 +56,10 @@ ale <- function(df, model, features, xALE = NA){
     df_aux$id <- NA
     
     for(i in 1:nrow(df_aux)){
-      id_zk <- which(df_aux[[x]][i] <= xALE[[x]])[1]
+      id_zk <- which(df_aux[[x]][i] <= xALE[[x]][1:(length(xALE[[x]])-1)])[1]
       df_aux$id[i] <- id_zk
-      df_aux$z0[i] <- xALE[[x]][id_zk-1]
-      df_aux$z1[i] <- xALE[[x]][id_zk]
+      df_aux$z0[i] <- xALE[[x]][id_zk]
+      df_aux$z1[i] <- xALE[[x]][id_zk+1]
     }
     
     df_aux$y_z0 <- NA
@@ -82,8 +86,9 @@ ale <- function(df, model, features, xALE = NA){
         ale = sum_ale/n) %>% 
       arrange(z1) %>% 
       mutate(ale_cum = cumsum(ale),
-             ale_cum_cent = sum(n*ale_cum)/sum(n),
-             ale_final = ale_cum - ale_cum_cent)
+             ale_cum_cent = sum(n*ale_cum, na.rm = TRUE)/sum(n, na.rm = TRUE),
+             ale_final = ale_cum - ale_cum_cent) %>% 
+      na.omit()
     
     ale_list[[x]] <- df_aux %>% 
       select(z1, n, ale_final) %>% 
@@ -158,30 +163,17 @@ ale_plot <- function(ale_by_var, df_original, features = "all", point = FALSE) {
 }
 
 
-ale_plots <- function(df, 
-                      response = "y",
-                      predictors = "all",
-                      model = randomForest,...){
-  
-  if (predictors[1] == "all") 
-    predictors <- names(df)[names(df) != response]
-  
-  mod <- model(
-    reformulate(response = response, termlabels = predictors),
-    data = df
-  )
-  
-  return(ale(df, mod, features = predictors,...))
-}
 
-
-ale_by_task_feature <- function(df, model = randomForest,...) {
+ale_by_task_feature <- function(df, model = randomForest, xALE, ...) {
   
   list_ales <- list()
   for (task in unique(df$id_task)){
     df_task <- df[df$id_task == task, ]
     df_task$id_task <- NULL
-    list_ales[[task]] <- ale_plots(df_task, model = model,...)
+    list_ales[[task]] <- ale(df_task, 
+                             model = model[[task]]$model, 
+                             xALE = xALE[[task]],
+                             ...)
   }
   
   if (is.null(names(list_ales))) names(list_ales) <- 1:length(list_ales)
@@ -197,32 +189,4 @@ ale_by_task_feature <- function(df, model = randomForest,...) {
   
   return(bind_rows(aux))
 
-}
-
-
-importance <- function(df, 
-                       model = randomForest, 
-                       predictors = "all",
-                       response = "y"){
-  
-  list_importance <- list()
-  for (task in unique(df$id_task)){
-    df_task <- df[df$id_task == task, ]
-    df_task$id_task <- NULL
-    
-    if (predictors[1] == "all") 
-      predictors <- names(df_task)[names(df_task) != response]
-    
-    mod <- model(
-      reformulate(response = response, termlabels = predictors),
-      data = df_task,
-      importance = TRUE
-    )
-    
-    imp <- mod$importance[, "IncNodePurity"]
-    
-    list_importance[[task]] <- imp/sum(imp)
-  }
-  
-  return(list_importance)
 }

@@ -35,55 +35,8 @@ data_generation <- function(task_config){
   y <- do.call(eval(parse(text = task_config$y)), args = df)
   
   df <- as.data.frame(df)
-  # df <- std(df)
   df$y <- y
   
   df$id_task <- task_config[["id_task"]]
   return(df)
 }
-
-
-
-
-# DEPRECATED --------------------------------------------------------------
-# 
-# data_generation <- function(id_task, n_obs, fun_x4_x5){
-#   
-#   # Features
-#   x1_x2 <- mvrnorm(n_obs, 
-#                    mu = c(0, 0),
-#                    Sigma = matrix(c(2, 1, .05, .6), 2, 2)
-#   )
-#   
-#   colnames(x1_x2) <- c("x1", "x2")
-#   
-#   x3 <- runif(n_obs)
-#   
-#   x4 <- rnormMix(n_obs, 
-#                  mean1 = .25, sd1 = .1, 
-#                  mean2 = .75, sd2 = .1
-#   )
-#   
-#   x5 <- .2*x4**2 + rnorm(n_obs, sd = .1)
-#   
-#   x4 <- do.call(task1$x4$f, 
-#                 args = c(task1$x4$args, n = n_obs))
-#   
-#   # Target
-#   y <- rastrigin(x1_x2[,1], x1_x2[,2]) + fun_x4_x5(x4, x5)
-#   
-#   # Final data.frame
-#   df <- data.frame(
-#     x1 = x1_x2[, 1],
-#     x2 = x1_x2[, 2],
-#     x3,
-#     x4,
-#     x5,
-#     y
-#   )
-#   
-#   df <- std(df)
-#   df$id_task <- id_task
-#   
-#   return(df)
-# }
