@@ -1,5 +1,5 @@
 ---
-title: "A Multitask Similarity Measure using Explainable Methods"
+title: "An Explainable Multi-Task Similarity Measure: Integrating Accumulated Local Effects and Weighted Fréchet Distance"
 output: github_document
 bibliography: references.bib
 ---
@@ -8,5 +8,5 @@ bibliography: references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This repository contains the code used in the paper *A Multitask Similarity Measure using Explainable Methods*.
+This repository contains the code used in the paper *An Explainable Multi-Task Similarity Measure: Integrating Accumulated Local Effects and Weighted Fréchet Distance*.
 

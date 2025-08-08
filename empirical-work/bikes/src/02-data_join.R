@@ -48,12 +48,13 @@ trips <- trips %>%
 
 # TRAIN TEST SPLIT --------------------------------------------------------
 
-# Build the test set using trips from the six months
-# preceding each station’s latest available date
+# Build the test set using the p‑quantile of dates for each station
 
+prob <- 0.7
 trips <- trips %>% 
   group_by(station_unlock) %>% 
-  mutate(date_split = max(date(date)) - months(6)) %>% 
+  # mutate(date_split = max(date(date)) - months(6)) %>% 
+  mutate(date_split = quantile(date, probs = prob)) %>% 
   ungroup()
 
 test <- trips %>% 

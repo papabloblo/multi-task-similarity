@@ -17,6 +17,35 @@ trips <- trips %>%
   ungroup()
 
 
+# If an hour is missing from the dataset,
+# it means there were no trips during that hour, so its value should be set to 0.
+
+stations_period <- trips %>% 
+  group_by(station_unlock) %>% 
+  summarise(
+    min_date = min(date),
+    max_date = max(date)
+    )
+
+
+expand_dates <- function(station_unlock, min_date, max_date){
+  return(tibble(station_unlock = station_unlock, 
+                date = seq(min_date, max_date, by = '1 hour')))
+}
+
+df <- pmap(stations_period, expand_dates)
+
+all_hours <- bind_rows(df)
+all_hours$n <- 0
+
+trips <- trips %>% 
+  full_join(
+    all_hours, 
+    by = join_by(station_unlock, date)
+    ) %>% 
+  mutate(n = ifelse(is.na(n.x), n.y, n.x)) %>% 
+  select(station_unlock, date, n)
+
 # Include past number of trips to use in the prediction.
 
 # Previous hours to use
